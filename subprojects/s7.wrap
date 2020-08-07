@@ -1,0 +1,4 @@
+[wrap-git]
+ url = https://github.com/actonDev/s7.git
+ revision = feature/meson
+ depth = 1

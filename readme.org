@@ -1,0 +1,4 @@
+* S7 Playground
+  Try =S7 Scheme= in your browser!
+
+  See [[file:dev.org]] for development info

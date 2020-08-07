@@ -1,0 +1,12 @@
+* References
+  https://github.com/mesonbuild/meson/issues/4101#issue-355470159
+* TODO emrun??
+  WTF can't I just run the .html file..
+  
+  https://emscripten.org/docs/compiling/Running-html-files-with-emrun.html
+  #+BEGIN_QUOTE
+  emrun is a command line tool that can run generated HTML pages via a
+  locally launched web server. This is helpful when using web browsers
+  that cannot run a generated .html file via a file:// URL (e.g. by
+  double-clicking the file) because of the default browser CORS rules.
+  #+END_QUOTE

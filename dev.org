@@ -1,0 +1,29 @@
+* S7 playground
+** Preparation (emsdk)
+   #+BEGIN_SRC sh
+cd ~/dev/github/emsdk
+./emsdk install latest
+./emsdk activate latest
+source ./emsdk_env.sh
+emcc -v
+   #+END_SRC
+
+** Building
+   Note: =emcc= has to be in the path for the following to work
+
+   Setting up project
+   #+BEGIN_SRC src
+meson setup build --cross-file wasm.ini
+   #+END_SRC
+
+   Building & launching
+   #+BEGIN_SRC sh
+ninja -C build
+# hm.. apparently I need this? cannot run just open the html file? not sure why (CORS?..)
+emrun index.html
+   #+END_SRC
+
+   Useful snippets
+   #+BEGIN_SRC sh
+node build/s7_wasm.js
+   #+END_SRC
