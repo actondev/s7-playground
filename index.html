@@ -15,7 +15,6 @@
   <script type="text/javascript">
     document.getElementById('eval').onclick = function () {
       //click me function!
-      console.log("clicked!")
       const form = document.getElementById('form').value
       Module.ccall('eval_string', // name of C function
         null, // return type
