@@ -19,8 +19,10 @@ meson setup build --cross-file wasm.ini
    Building & launching
    #+BEGIN_SRC sh
 ninja -C build
-# hm.. apparently I need this? cannot run just open the html file? not sure why (CORS?..)
+# sometimes getting Uncaught (in promise) TypeError: NetworkError when attempting to fetch resource
 emrun index.html
+# or (to be able to refresh - also seems more reliable?)
+emrun --serve_after_close index.html
    #+END_SRC
 
    Useful snippets

@@ -10,3 +10,14 @@
   that cannot run a generated .html file via a file:// URL (e.g. by
   double-clicking the file) because of the default browser CORS rules.
   #+END_QUOTE
+
+* DONE Calling c function from js (s7_eval_string)
+  
+* TODO embedding files (eg .scm files)
+  https://emscripten.org/docs/getting_started/Tutorial.html
+  #+BEGIN_QUOTE
+  Files that you want to access should be preloaded or embedded into
+  the virtual file system. Preloading (or embedding) generates a
+  virtual file system that corresponds to the file system structure at
+  compile time, relative to the current directory.
+  #+END_QUOTE
