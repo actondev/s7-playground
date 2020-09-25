@@ -22,6 +22,6 @@ executable('s7_wasm',
 	   link_args: [
 	     # this is the second pass, emcc -o s7_wasm.js ...
 	     '-sEXTRA_EXPORTED_RUNTIME_METHODS=["ccall"]',
-	     '-sEXPORTED_FUNCTIONS=["_main", "_eval_string"]',
+	     '-sEXPORTED_FUNCTIONS=["_main", "_eval_string", "_get_out", "_get_err"]',
 	     ],
 	   name_suffix: 'js')

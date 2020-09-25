@@ -19,6 +19,10 @@ meson setup build --cross-file wasm.ini
    Building & launching
    #+BEGIN_SRC sh
 ninja -C build
+   #+END_SRC
+
+   #+BEGIN_SRC sh :session *emrun*
+source ~/dev/github/emsdk/emsdk_env.sh
 # sometimes getting Uncaught (in promise) TypeError: NetworkError when attempting to fetch resource
 emrun index.html
 # or (to be able to refresh - also seems more reliable?)
@@ -29,3 +33,17 @@ emrun --serve_after_close index.html
    #+BEGIN_SRC sh
 node build/s7_wasm.js
    #+END_SRC
+
+* gh-pages
+  #+BEGIN_SRC sh
+git checkout --orphan gh-pages
+git commit -am "deploy"
+git add index.html -f
+git push --set-upstream origin gh-pages --force
+  #+END_SRC
+* Dependencies
+  #+BEGIN_SRC sh :session *deps*
+git clone https://github.com/shaunlebron/parinfer-codemirror.git ~/dev/github/parinfer-codemirror
+cd ~/dev/github/parinfer-codemirror
+npm install
+  #+END_SRC

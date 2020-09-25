@@ -2,3 +2,5 @@ build*/
 subprojects/*
 !subprojects/*.wrap
 *.kdev4
+index.html
+*.zip

@@ -1,0 +1,37 @@
+/* see example: https://github.com/kaushalmodi/.emacs.d/blob/master/misc/css/leuven_theme.css */
+pre.src                                      {background-color:#222;
+					 color: #EEE}
+pre span.org-builtin                     {color:#fd971f;font-weight:bold;}
+pre span.org-string                      {color:#e2c770;}
+pre span.org-doc                         {color:#7f7f80;}
+pre span.org-keyword                     {color:#fb2874;}
+pre span.org-variable-name,
+.org-clojure-keyword {color:#fd971f ;}
+pre span.org-function-name               {color:#b6e63e;}
+pre span.org-type                        {color:#66d9ef;}
+pre span.org-constant                    {color:#fd971f;}
+
+pre span.org-preprocessor                {color:#808080;font-weight:bold;}
+pre span.org-comment-delimiter           {color:#8D8D84;}
+pre span.org-comment                     {color:#8D8D84;font-style:italic}
+pre span.org-outshine-level-1            {color:#8D8D84;font-style:italic}
+pre span.org-outshine-level-2            {color:#8D8D84;font-style:italic}
+pre span.org-outshine-level-3            {color:#8D8D84;font-style:italic}
+pre span.org-outshine-level-4            {color:#8D8D84;font-style:italic}
+pre span.org-outshine-level-5            {color:#8D8D84;font-style:italic}
+pre span.org-outshine-level-6            {color:#8D8D84;font-style:italic}
+pre span.org-outshine-level-7            {color:#8D8D84;font-style:italic}
+pre span.org-outshine-level-8            {color:#8D8D84;font-style:italic}
+pre span.org-outshine-level-9            {color:#8D8D84;font-style:italic}
+
+pre span.org-rainbow-delimiters-depth-1  {color:#e91e63;}
+pre span.org-rainbow-delimiters-depth-2  {color:#2196F3;}
+pre span.org-rainbow-delimiters-depth-3  {color:#EF6C00;}
+pre span.org-rainbow-delimiters-depth-4  {color:#B388FF;}
+pre span.org-rainbow-delimiters-depth-5  {color:#76ff03;}
+pre span.org-rainbow-delimiters-depth-6  {color:#26A69A;}
+pre span.org-rainbow-delimiters-depth-7  {color:#FFCDD2;}
+pre span.org-rainbow-delimiters-depth-8  {color:#795548;}
+pre span.org-rainbow-delimiters-depth-9  {color:#DCE775;}
+
+pre span.org-sh-quoted-exec              {color:#FF1493;}

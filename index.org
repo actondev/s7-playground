@@ -1,0 +1,196 @@
+#+PROPERTY: header-args:scheme :exports both :eval never-export
+#+TITLE: s7 playground
+# #+SUBTITLE: Try s7 scheme in your browser
+#+OPTIONS: html-style:nil
+#+OPTIONS: toc:nil
+#+OPTIONS: html-postamble:nil
+# see https://orgmode.org/manual/Publishing-options.html
+#+OPTIONS: num:nil
+
+# -- codemirror
+#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/lib/codemirror.js"></script>
+#+HTML_HEAD: <link rel="stylesheet" href="libs/codemirror/lib/codemirror.css">
+#+HTML_HEAD: <link rel="stylesheet" href="libs/codemirror/theme/monokai.css">
+#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/mode/scheme.js"></script>
+# codemirror addons
+#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/addon/edit/matchbrackets.js"></script>
+#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/addon/edit/closebrackets.js"></script>
+#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/addon/selection/active-line.js"></script>
+# -- parinfer
+#+HTML_HEAD: <script type="text/javascript" src="libs/parinfer.js"></script>
+#+HTML_HEAD: <script type="text/javascript" src="libs/parinfer-codemirror.js"></script>
+# -- our stuf
+#+HTML_HEAD: <script type="text/javascript" src="build/s7_wasm.js"></script>
+#+HTML_HEAD: <script type="text/javascript" src="js/s7-playground.js"></script>
+#+HTML_HEAD: <link rel='stylesheet' type='text/css' href='css/style.css'/>
+
+A work-in-progress interactive tutorial of =s7 scheme=. For a more complete manual please refer to https://ccrma.stanford.edu/software/snd/snd/s7.html
+
+* COMMENT dev
+  TODO: move these in =dev.org= file when done with mods.
+  Dev notes: to run the snippets inside emacs.
+
+  #+BEGIN_SRC emacs-lisp :results silent
+;; replace with an s7 repl that handles multi line input properly
+(run-scheme (concat "~/dev/actondev/s7-imgui/build/repl"))
+  #+END_SRC
+
+  #+BEGIN_SRC sh
+source ~/dev/github/emsdk/emsdk_env.sh
+emrun --serve_after_close index.html
+  #+END_SRC
+** org-export-filter-src-block-functions
+   https://orgmode.org/manual/Advanced-Export-Configuration.html
+   Making the src blocks a text input + an eval button
+
+   set =org-html-htmlize-output-type= to nil. that way the =org-export-filter-src-block-functions= will get an "clean" text like
+   #+BEGIN_EXAMPLE
+"<div class=\"org-src-container\">
+<pre class=\"src src-scheme\">(define x 1)
+</pre>
+</div>
+
+"
+   #+END_EXAMPLE
+
+   #+BEGIN_SRC emacs-lisp :results silent
+(defun s7-playground/src-block (text backend info)
+  "Ensure \" \" are properly handled in LaTeX export."
+  (print "src-block info:")
+  (print text)
+  ;; (print info)
+  (let* ((code (s-trim (replace-regexp-in-string "<[^>]*>" "" text)))
+	 (formatted (format "<div class='code-container'>
+<textarea class='code'>%s</textarea>
+<button class='eval'>eval</button>
+<pre class='res'></pre>
+<pre class='out'></pre>
+<pre class='err'></pre>
+</div>" code)))
+    formatted))
+
+;; only eval once
+'(add-to-list 'org-export-filter-src-block-functions
+	      's7-playground/src-block)
+   #+END_SRC
+
+   #+BEGIN_SRC emacs-lisp
+(let ((str "<div class=\"org-src-container\">
+<pre class=\"src src-scheme\">(define x 1)
+</pre>
+</div>
+
+"))
+  (replace-regexp-in-string "<[^>]*>" "" str))
+   #+END_SRC
+
+
+*** Other notes
+    #+BEGIN_QUOTE
+   
+    Oh wait! Just found org-babel-map-src-blocks and the two hooks org-export-before-{processing,parsing}-hook. That's probably what I'm going to do. – purple_arrows Sep 25 '18 at 22:14
+
+    #+END_QUOTE
+
+** org-babel-execute:scheme
+   Redefining =org-babel-execute:scheme= cause it uses geiser.. ugh!
+   #+BEGIN_SRC emacs-lisp :results silent
+(defun org-babel-execute:scheme (body params)
+  "Execute a block of Scheme code with org-babel.
+This function is called by `org-babel-execute-src-block'"
+  (let* ((source-buffer (current-buffer))
+	 (source-buffer-name (replace-regexp-in-string ;; zap surrounding *
+			      "^ ?\\*\\([^*]+\\)\\*" "\\1"
+			      (buffer-name source-buffer))))
+    (save-excursion
+      (let* ((result-type (cdr (assq :result-type params)))
+	     (session "*scheme*")
+	     (full-body (org-babel-expand-body:scheme body params))
+	     (result
+	      (progn
+		(message session)
+		(message full-body)
+		(let ((out (org-babel-comint-with-output
+			       (session ">" t body)
+			     (scheme-send-string body)
+			     (accept-process-output (get-buffer-process (current-buffer))))))
+		  ;; (print out)
+		  (s-trim (mapconcat #'identity out "\n"))))))
+	result))))  
+   #+END_SRC
+   
+* Intro
+  #+BEGIN_SRC scheme
+;; these are some comments
+(display "Hello there!!") ;; stdout is displayed with blue background
+(+ 1 2 3) ;; output is displayed in gray background
+this-will-cause-an-error ;; will cause an error. comment this line and you'll see "6" in the output
+;; stderr is displayed in red background
+  #+END_SRC
+
+  # the .example sibling gets deleted on evaluation
+  #+BEGIN_EXPORT html
+<div class='example'> 
+<pre class='res'>unbound-variable</pre>
+<pre class='out'>Hello there!!</pre>
+<pre class='err'>;unbound variable this-will-cause-an-error in this-will-cause-an-error</pre>
+</div>
+  #+END_EXPORT
+
+* Math
+  s7 includes:
+  - sinh, cosh, tanh, asinh, acosh, atanh
+  - logior, logxor, logand, lognot, logbit?, ash, integer-decode-float
+  - random
+  - nan?, infinite?
+
+  #+BEGIN_SRC scheme :results value verbatim :exports both
+(list
+ (cos 0)
+ (sin 0)
+ (random 100))
+  #+END_SRC
+
+  #+RESULTS:
+  : (1 0 94)
+
+* define*, lambda*
+  =define*= and =lambda*= are extensions of define and lambda that
+  make it easier to deal with optional, keyword, and rest
+  arguments.
+
+  The syntax is very simple: every argument to =define*= has a default
+  value and is automatically available as a keyword argument. The
+  default value is either =#f= if unspecified, or given in a list
+  whose first member is the argument name. The last argument can be
+  preceded by =:rest= or a dot =.= to indicate that all other trailing
+  arguments should be packaged as a list under that argument's name. A
+  trailing or rest argument's default value is =()= and can't be
+  specified in the declaration. The rest argument is *not* available as
+  a keyword argument.
+
+  #+BEGIN_SRC scheme :exports both
+(define*
+ ;; function name: hi
+ ;; a is needed
+ ;; b has default argument 32
+ ;; c has default argument "hi"
+ (hi a (b 32) (c "hi"))
+ ;; just returning the arguments
+ (list a b c))
+
+(list
+ (hi 1)
+ (hi :b 2 :a 3)
+ (hi 3 2 1))
+  #+END_SRC
+
+  #+RESULTS:
+  : ((1 32 "hi") (3 2 "hi") (3 2 1))
+
+* COMMENT local vars
+
+  # Local Variables:
+  # org-html-htmlize-output-type: nil
+  # End:
+  
