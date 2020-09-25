@@ -16,11 +16,9 @@
 #+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/addon/edit/matchbrackets.js"></script>
 #+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/addon/edit/closebrackets.js"></script>
 #+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/addon/selection/active-line.js"></script>
-#
 # -- parinfer
 #+HTML_HEAD: <script type="text/javascript" src="libs/parinfer.js"></script>
 #+HTML_HEAD: <script type="text/javascript" src="libs/parinfer-codemirror.js"></script>
-#
 # -- our stuf
 #+HTML_HEAD: <script type="text/javascript" src="build/s7_wasm.js"></script>
 #+HTML_HEAD: <script type="text/javascript" src="js/s7-playground.js"></script>
@@ -146,7 +144,7 @@ this-will-cause-an-error ;; will cause an error. comment this line and you'll se
   - random
   - nan?, infinite?
 
-  #+BEGIN_SRC scheme :results value verbatim
+  #+BEGIN_SRC scheme :results value verbatim :exports both
 (list
  (cos 0)
  (sin 0)
@@ -171,7 +169,7 @@ this-will-cause-an-error ;; will cause an error. comment this line and you'll se
   specified in the declaration. The rest argument is *not* available as
   a keyword argument.
 
-  #+BEGIN_SRC scheme
+  #+BEGIN_SRC scheme :exports both
 (define*
  ;; function name: hi
  ;; a is needed
