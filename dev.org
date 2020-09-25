@@ -34,6 +34,13 @@ emrun --serve_after_close index.html
 node build/s7_wasm.js
    #+END_SRC
 
+* gh-pages
+  #+BEGIN_SRC sh
+git checkout --orphan gh-pages
+git commit -am "deploy"
+git add index.html -f
+git push --set-upstream origin gh-pages --force
+  #+END_SRC
 * Dependencies
   #+BEGIN_SRC sh :session *deps*
 git clone https://github.com/shaunlebron/parinfer-codemirror.git ~/dev/github/parinfer-codemirror
