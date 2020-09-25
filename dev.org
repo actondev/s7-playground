@@ -19,6 +19,10 @@ meson setup build --cross-file wasm.ini
    Building & launching
    #+BEGIN_SRC sh
 ninja -C build
+   #+END_SRC
+
+   #+BEGIN_SRC sh :session *emrun*
+source ~/dev/github/emsdk/emsdk_env.sh
 # sometimes getting Uncaught (in promise) TypeError: NetworkError when attempting to fetch resource
 emrun index.html
 # or (to be able to refresh - also seems more reliable?)

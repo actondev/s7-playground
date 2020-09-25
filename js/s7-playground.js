@@ -20,10 +20,26 @@ function setupCodeMirror() {
 	const evalButton = parent.querySelector('.eval');
 	evalButton.onclick = function() {
 	    const wrappedCode = "(begin " + cm.getValue() + ")";
-	    Module.ccall('eval_string', // name of C function
-			 null, // return type
+	    const res = Module.ccall('eval_string', // name of C function
+			 'string', // return type
 			 ['string'], // argument types
 			 [wrappedCode]); // arguments
+
+	    const out = Module.ccall('get_out', // name of C function
+			 'string', // return type
+			 [], // argument types
+				     []); // arguments
+
+	    const err = Module.ccall('get_err', // name of C function
+			 'string', // return type
+			 [], // argument types
+				     []); // arguments
+
+	    console.log("res:", res);
+	    console.log("out:", out);
+	    console.log("err:", err);
+
+	    // note: gotta check for <empty string>
 	}
     }
 }
