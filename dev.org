@@ -29,3 +29,10 @@ emrun --serve_after_close index.html
    #+BEGIN_SRC sh
 node build/s7_wasm.js
    #+END_SRC
+
+* Dependencies
+  #+BEGIN_SRC sh :session *deps*
+git clone https://github.com/shaunlebron/parinfer-codemirror.git ~/dev/github/parinfer-codemirror
+cd ~/dev/github/parinfer-codemirror
+npm install
+  #+END_SRC

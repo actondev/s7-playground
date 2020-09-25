@@ -1,0 +1,7 @@
+/* modifying monokai */
+.CodeMirror-matchingbracket {
+    /* outline:1px solid grey; */
+    text-decoration: none !important;
+    background: #666;
+    /* color:black !important; */
+}

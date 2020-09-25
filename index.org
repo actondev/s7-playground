@@ -2,8 +2,28 @@
 # #+HTML_HEAD:      <style type="text/css">#outline-container-introduction{ clear:both; }</style>
 #+TITLE: s7 playground
 #+SUBTITLE: Try s7 scheme in your browser
-#+HTML_HEAD: <link rel='stylesheet' type='text/css' href='css/code.css'/>
-#+HTML_HEAD: <script type="text/javascript" src="build/s7_wasm.js">
+#+OPTIONS: html-style:nil
+
+# -- codemirror
+#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/lib/codemirror.js"></script>
+#+HTML_HEAD: <link rel="stylesheet" href="libs/codemirror/lib/codemirror.css">
+#+HTML_HEAD: <link rel="stylesheet" href="libs/codemirror/theme/monokai.css">
+#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/mode/scheme.js"></script>
+# codemirror addons
+#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/addon/edit/matchbrackets.js"></script>
+#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/addon/edit/closebrackets.js"></script>
+#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/addon/selection/active-line.js"></script>
+#
+# -- parinfer
+#+HTML_HEAD: <script type="text/javascript" src="libs/parinfer.js"></script>
+#+HTML_HEAD: <script type="text/javascript" src="libs/parinfer-codemirror.js"></script>
+#
+# -- our stuf
+#+HTML_HEAD: <script type="text/javascript" src="build/s7_wasm.js"></script>
+#+HTML_HEAD: <script type="text/javascript" src="js/s7-playground.js"></script>
+#+HTML_HEAD: <link rel='stylesheet' type='text/css' href='css/style.css'/>
+
+
 * COMMENT dev
   Dev notes: to run the snippets inside emacs
 
@@ -39,7 +59,7 @@ emrun --serve_after_close index.html
   (let* ((code (s-trim (replace-regexp-in-string "<[^>]*>" "" text)))
 	 (formatted (format "<div class='code-container'>
 <textarea class='code'>%s</textarea>
-<button onclick='execute(this)'>eval</button>
+<button class='eval'>eval</button>
 </div>" code)))
     formatted))
 
@@ -103,6 +123,9 @@ This function is called by `org-babel-execute-src-block'"
 * Definitions
   #+BEGIN_SRC scheme
 (define x 1)
+(display "x is\n")
+(display x)
+(newline)
   #+END_SRC
 
   #+RESULTS:
@@ -124,30 +147,29 @@ This function is called by `org-babel-execute-src-block'"
   #+BEGIN_EXPORT html
 
   <script type="text/javascript">
-    function execute(el) {
-    console.log("execute", el);
-    const parent = el.parentElement;
-    console.log("parent", parent);
-    const code = parent.querySelector('.code').value;
-    const wrappedCode = "(begin " + code + ")";
-    console.log("code", code, "wrapped", wrappedCode);
-    Module.ccall('eval_string', // name of C function
-	null, // return type
-	['string'], // argument types
-	[wrappedCode]); // arguments
-    }
+       function execute(el) {
+       console.log("execute", el);
+       const parent = el.parentElement;
+       console.log("parent", parent);
+       const code = parent.querySelector('.code').value;
+       const wrappedCode = "(begin " + code + ")";
+       console.log("code", code, "wrapped", wrappedCode);
+       Module.ccall('eval_string', // name of C function
+		    null, // return type
+		    ['string'], // argument types
+		    [wrappedCode]); // arguments
+   }     
+       document.getElementById('eval').onclick =
+       function () {
+	   //click me function!
+	   const form = document.getElementById('form').value
+	   Module.ccall('eval_string', // name of C function
+			null, // return type
+			['string'], // argument types
+			[form]); // arguments
+       }
 
-  
-    document.getElementById('eval').onclick = function () {
-      //click me function!
-      const form = document.getElementById('form').value
-      Module.ccall('eval_string', // name of C function
-	null, // return type
-	['string'], // argument types
-	[form]); // arguments
-    }
   </script>
-
   #+END_EXPORT
 * COMMENT local vars
 
