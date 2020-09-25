@@ -60,6 +60,9 @@ emrun --serve_after_close index.html
 	 (formatted (format "<div class='code-container'>
 <textarea class='code'>%s</textarea>
 <button class='eval'>eval</button>
+<pre class='res'></pre>
+<pre class='out'></pre>
+<pre class='err'></pre>
 </div>" code)))
     formatted))
 

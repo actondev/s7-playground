@@ -1,7 +1,25 @@
+body {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
 /* modifying monokai */
 .CodeMirror-matchingbracket {
     /* outline:1px solid grey; */
     text-decoration: none !important;
     background: #666;
     /* color:black !important; */
+}
+.CodeMirror {
+    height: auto;
+}
+
+.res, .example {
+    background-color: #CCC;
+}
+.out {
+    background-color: rgba(0, 0, 255, 0.2);
+}
+.err {
+    background-color: rgba(255, 0, 0, 0.2);
 }

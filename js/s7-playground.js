@@ -19,7 +19,9 @@ function setupCodeMirror() {
 	console.log("parent", parent);
 	const evalButton = parent.querySelector('.eval');
 	evalButton.onclick = function() {
-	    const wrappedCode = "(begin " + cm.getValue() + ")";
+	    // newline is important before closing paren!
+	    // (in case of last line comments)
+	    const wrappedCode = "(begin " + cm.getValue() + "\n)";
 	    const res = Module.ccall('eval_string', // name of C function
 			 'string', // return type
 			 ['string'], // argument types
@@ -38,6 +40,15 @@ function setupCodeMirror() {
 	    console.log("res:", res);
 	    console.log("out:", out);
 	    console.log("err:", err);
+	    parent.querySelector('.res').innerHTML = res;
+	    parent.querySelector('.out').innerHTML = out;
+	    parent.querySelector('.err').innerHTML = err;
+
+	    console.log("parent", parent);
+	    const possibleStaticResult = parent.nextSibling;
+	    if(possibleStaticResult.className == "example") {
+		possibleStaticResult.remove();
+	    }
 
 	    // note: gotta check for <empty string>
 	}
