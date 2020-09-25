@@ -1,0 +1,157 @@
+#+PROPERTY: header-args:scheme :exports both :eval never-export
+# #+HTML_HEAD:      <style type="text/css">#outline-container-introduction{ clear:both; }</style>
+#+TITLE: s7 playground
+#+SUBTITLE: Try s7 scheme in your browser
+#+HTML_HEAD: <link rel='stylesheet' type='text/css' href='css/code.css'/>
+#+HTML_HEAD: <script type="text/javascript" src="build/s7_wasm.js">
+* COMMENT dev
+  Dev notes: to run the snippets inside emacs
+
+   #+BEGIN_SRC emacs-lisp :results silent
+;; replace with an s7 repl that handles multi line input properly
+(run-scheme (concat "~/dev/actondev/s7-imgui/build/repl"))
+   #+END_SRC
+
+   #+BEGIN_SRC sh
+source ~/dev/github/emsdk/emsdk_env.sh
+emrun --serve_after_close index.html
+   #+END_SRC
+** org-export-filter-src-block-functions
+   https://orgmode.org/manual/Advanced-Export-Configuration.html
+   Making the src blocks a text input + an eval button
+
+   set =org-html-htmlize-output-type= to nil. that way the =org-export-filter-src-block-functions= will get an "clean" text like
+   #+BEGIN_EXAMPLE
+"<div class=\"org-src-container\">
+<pre class=\"src src-scheme\">(define x 1)
+</pre>
+</div>
+
+"
+   #+END_EXAMPLE
+
+   #+BEGIN_SRC emacs-lisp :results silent
+(defun s7-playground/src-block (text backend info)
+  "Ensure \" \" are properly handled in LaTeX export."
+  (print "src-block info:")
+  (print text)
+  ;; (print info)
+  (let* ((code (s-trim (replace-regexp-in-string "<[^>]*>" "" text)))
+	 (formatted (format "<div class='code-container'>
+<textarea class='code'>%s</textarea>
+<button onclick='execute(this)'>eval</button>
+</div>" code)))
+    formatted))
+
+;; only eval once
+'(add-to-list 'org-export-filter-src-block-functions
+             's7-playground/src-block)
+   #+END_SRC
+
+   #+BEGIN_SRC emacs-lisp
+(let ((str "<div class=\"org-src-container\">
+<pre class=\"src src-scheme\">(define x 1)
+</pre>
+</div>
+
+"))
+  (replace-regexp-in-string "<[^>]*>" "" str))
+   #+END_SRC
+
+
+*** Other notes
+    #+BEGIN_QUOTE
+   
+ Oh wait! Just found org-babel-map-src-blocks and the two hooks org-export-before-{processing,parsing}-hook. That's probably what I'm going to do. – purple_arrows Sep 25 '18 at 22:14
+
+    #+END_QUOTE
+
+** org-babel-execute:scheme
+   Redefining =org-babel-execute:scheme= cause it uses geiser.. ugh!
+     #+BEGIN_SRC emacs-lisp :results silent
+(defun org-babel-execute:scheme (body params)
+  "Execute a block of Scheme code with org-babel.
+This function is called by `org-babel-execute-src-block'"
+  (let* ((source-buffer (current-buffer))
+	 (source-buffer-name (replace-regexp-in-string ;; zap surrounding *
+			      "^ ?\\*\\([^*]+\\)\\*" "\\1"
+			      (buffer-name source-buffer))))
+    (save-excursion
+      (let* ((result-type (cdr (assq :result-type params)))
+	     (session "*scheme*")
+	     (full-body (org-babel-expand-body:scheme body params))
+	     (result
+	      (progn
+		(message session)
+		(message full-body)
+		(let ((out (org-babel-comint-with-output
+			       (session ">" t body)
+			     (scheme-send-string body)
+			     (accept-process-output (get-buffer-process (current-buffer))))))
+		  ;; (print out)
+		  (s-trim (mapconcat #'identity out "\n"))))))
+	(let ((table
+	       (org-babel-reassemble-table
+		result
+		(org-babel-pick-name (cdr (assq :colname-names params))
+				     (cdr (assq :colnames params)))
+		(org-babel-pick-name (cdr (assq :rowname-names params))
+				     (cdr (assq :rownames params))))))
+	  (org-babel-scheme--table-or-string table))))))  
+     #+END_SRC
+
+* Definitions
+  #+BEGIN_SRC scheme
+(define x 1)
+  #+END_SRC
+
+  #+RESULTS:
+  : 1
+
+  #+BEGIN_SRC scheme
+(+ 1 2 3)  
+  #+END_SRC
+
+  #+RESULTS:
+  : 6
+* JS eval etc
+  # TODO do not export this heading
+  #+BEGIN_EXPORT html
+  <textarea id="form"></textarea>
+  <button id="eval">eval</button>
+  #+END_EXPORT
+
+  #+BEGIN_EXPORT html
+
+  <script type="text/javascript">
+    function execute(el) {
+    console.log("execute", el);
+    const parent = el.parentElement;
+    console.log("parent", parent);
+    const code = parent.querySelector('.code').value;
+    const wrappedCode = "(begin " + code + ")";
+    console.log("code", code, "wrapped", wrappedCode);
+    Module.ccall('eval_string', // name of C function
+	null, // return type
+	['string'], // argument types
+	[wrappedCode]); // arguments
+    }
+
+  
+    document.getElementById('eval').onclick = function () {
+      //click me function!
+      const form = document.getElementById('form').value
+      Module.ccall('eval_string', // name of C function
+	null, // return type
+	['string'], // argument types
+	[form]); // arguments
+    }
+  </script>
+
+  #+END_EXPORT
+* COMMENT local vars
+
+# Local Variables:
+# org-html-htmlize-output-type: nil
+# End:
+  
