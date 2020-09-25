@@ -1,10 +1,9 @@
-function setupCodeMirror() {
+function setup() {
     const codeElements = document.getElementsByClassName("code");
-    console.log(codeElements);
+    // looping in reverse. if not, replacing the code elements with codemirror will not work
     for (var i = codeElements.length-1; i >= 0; i--) {
 	const codeElement = codeElements[i];
 	const parent = codeElement.parentNode;
-	// console.log("i", i, "code el", codeElement);
 	const cm = CodeMirror(function(elt) {
 	    codeElement.parentNode.replaceChild(elt, codeElement);
 	}, {value: codeElement.value,
@@ -49,12 +48,11 @@ function setupCodeMirror() {
 	    if(possibleStaticResult.className == "example") {
 		possibleStaticResult.remove();
 	    }
-
-	    // note: gotta check for <empty string>
+	    // note: check for <empty string> ?
 	}
     }
 }
 
 window.onload = function() {
-    setupCodeMirror();
+    setup();
 }

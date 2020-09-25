@@ -14,7 +14,7 @@ body {
     height: auto;
 }
 
-.res, .example {
+.res, pre.example {
     background-color: #CCC;
 }
 .out {
