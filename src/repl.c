@@ -12,19 +12,25 @@
 int main(int argc, char** argv)
 {
     s7_scheme* sc;
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 4096
     char buffer[BUFFER_SIZE];
     buffer[0] = '\0';
     printf("s7-playground repl\n> ");
 
-    sc = s7_init();                 /* initialize the interpreter */
+    sc = s7_init();
     s7_pointer out,err;
     out = err = s7_nil(sc);
-    s7_pointer read_error_symbol = s7_make_symbol(sc, "read-error");
-    do                       /* fire up a read-eval-print loop */
+    do
     {
         int len = strlen(buffer);
         fgets(buffer+len, BUFFER_SIZE-len, stdin);
+        // example of a string that gets parsed and doesn't produce read-error
+        // but format-error
+//         strcpy(buffer,
+// "(begin (define-macro (examples . args)"
+// "  `(for-each (lambda (exp)"
+// "	       (format #f \"~A\n\" exp))               "
+// );
 
         s7_pointer port = s7_open_input_string(sc, buffer);
 
@@ -38,15 +44,15 @@ int main(int argc, char** argv)
         err = s7_open_output_string(sc);
         s7_set_current_error_port(sc, err);
 
-        s7_pointer form = s7_read(sc, port);
-
-        if (s7_is_equivalent(sc, form, read_error_symbol)) {
+        s7_read(sc, port);
+        // at some point I was checking against "read-error" symbol
+        // but once, when reading an incomplete form that contained a format call
+        // I got a "format-error" result as symbol
+        // .. so.. resorting back to checking error output
+        const char *errmsg = s7_get_output_string(sc, err);
+        if ((errmsg) && (*errmsg)) {
             // read-error
-
         } else {
-            // eval
-
-            // seems to be ok
             s7_close_output_port(sc, out);
             s7_close_output_port(sc, err);
 
@@ -54,6 +60,7 @@ int main(int argc, char** argv)
             out = s7_open_output_string(sc);
             s7_set_current_output_port(sc, out);
 
+	    // stderr
             err = s7_open_output_string(sc);
             s7_set_current_error_port(sc, err);
 
