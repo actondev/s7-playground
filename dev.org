@@ -8,11 +8,37 @@ source ./emsdk_env.sh
 emcc -v
    #+END_SRC
 
+** Building the special repl
+   #+BEGIN_SRC sh
+meson setup buildc
+   #+END_SRC
+
+   Building & launching
+   #+BEGIN_SRC sh
+ninja -C buildc
+   #+END_SRC
+
+   #+BEGIN_SRC sh
+./buildc/repl
+   #+END_SRC
+
+   #+BEGIN_SRC emacs-lisp :results silent
+(run-scheme (concat "buildc/repl"))
+   #+END_SRC
+
+   #+BEGIN_SRC scheme
+(begin
+  (display "here 1")
+  (display "here 2")
+  (format #t "aaa")
+  (+ 1 2 3))
+   #+END_SRC
+
 ** Building
    Note: =emcc= has to be in the path for the following to work
 
    Setting up project
-   #+BEGIN_SRC src
+   #+BEGIN_SRC sh
 meson setup build --cross-file wasm.ini
    #+END_SRC
 

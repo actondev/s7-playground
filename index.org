@@ -1,6 +1,8 @@
-#+PROPERTY: header-args:scheme :exports both :eval never-export
 #+TITLE: s7 playground
 # #+SUBTITLE: Try s7 scheme in your browser
+#+PROPERTY: header-args:scheme :exports both :eval never-export :wrap export html
+# the org-babel-execute:scheme is modded so that it outputs html with the
+# evaluation result, stdout and stderr
 #+OPTIONS: html-style:nil
 #+OPTIONS: toc:nil
 #+OPTIONS: html-postamble:nil
@@ -63,9 +65,6 @@ emrun --serve_after_close index.html
 	 (formatted (format "<div class='code-container'>
 <textarea class='code'>%s</textarea>
 <button class='eval'>eval</button>
-<pre class='res'></pre>
-<pre class='out'></pre>
-<pre class='err'></pre>
 </div>" code)))
     formatted))
 
@@ -108,14 +107,21 @@ This function is called by `org-babel-execute-src-block'"
 	     (full-body (org-babel-expand-body:scheme body params))
 	     (result
 	      (progn
-		(message session)
-		(message full-body)
-		(let ((out (org-babel-comint-with-output
-			       (session ">" t body)
-			     (scheme-send-string body)
-			     (accept-process-output (get-buffer-process (current-buffer))))))
+		(let* ((out (org-babel-comint-with-output
+				(session ">" t body)
+			      (scheme-send-string (format "(begin %s\n)" body))
+			      (accept-process-output (get-buffer-process (current-buffer)))))
+		       (parsed (read out)))
+		  (concat
+		   "<div class='eval-result'>\n"
+		   (format "<pre class='res'>%s</pre>\n" (car parsed))
+		   (format "<pre class='out'>%s</pre>\n" (cadr parsed))
+		   (format "<pre class='err'>%s</pre>\n" (caddr parsed))
+		   "</div>"
+		   )
 		  ;; (print out)
-		  (s-trim (mapconcat #'identity out "\n"))))))
+		  ;;(s-trim (mapconcat #'identity out "\n"))
+		  ))))
 	result))))  
    #+END_SRC
    
@@ -128,14 +134,16 @@ this-will-cause-an-error ;; will cause an error. comment this line and you'll se
 ;; stderr is displayed in red background
   #+END_SRC
 
-  # the .example sibling gets deleted on evaluation
-  #+BEGIN_EXPORT html
-<div class='example'> 
-<pre class='res'>unbound-variable</pre>
-<pre class='out'>Hello there!!</pre>
-<pre class='err'>;unbound variable this-will-cause-an-error in this-will-cause-an-error</pre>
-</div>
-  #+END_EXPORT
+  #+RESULTS:
+  #+BEGIN_export html
+  <div class='eval-result'>
+  <pre class='res'>unbound-variable</pre>
+  <pre class='out'>Hello there!!</pre>
+  <pre class='err'>
+  ;unbound variable this-will-cause-an-error in this-will-cause-an-error
+  </pre>
+  </div>
+  #+END_export
 
 * Math
   s7 includes:
@@ -152,7 +160,22 @@ this-will-cause-an-error ;; will cause an error. comment this line and you'll se
   #+END_SRC
 
   #+RESULTS:
-  : (1 0 94)
+  #+BEGIN_export html
+  <div class='eval-result'>
+  <pre class='res'>(1 0 32)</pre>
+  <pre class='out'></pre>
+  <pre class='err'></pre>
+  </div>
+  #+END_export
+
+
+
+  #+BEGIN_SRC scheme :results value verbatim :exports both
+(list
+ (cos 0)
+ (sin 0)
+ (random 1000))
+  #+END_SRC
 
 * define*, lambda*
   =define*= and =lambda*= are extensions of define and lambda that
@@ -186,7 +209,13 @@ this-will-cause-an-error ;; will cause an error. comment this line and you'll se
   #+END_SRC
 
   #+RESULTS:
-  : ((1 32 "hi") (3 2 "hi") (3 2 1))
+  #+BEGIN_export html
+  <div class='eval-result'>
+  <pre class='res'>((1 32 hi) (3 2 hi) (3 2 1))</pre>
+  <pre class='out'></pre>
+  <pre class='err'></pre>
+  </div>
+  #+END_export
 
 * COMMENT local vars
 

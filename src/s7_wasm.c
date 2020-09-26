@@ -4,16 +4,21 @@
 
 s7_scheme* g_sc = NULL;
 s7_pointer g_out, g_err;
+char* g_out_str = NULL;
 
 int main() {
-    printf("hello, world!\n");
-    g_sc = s7_init();
+     g_sc = s7_init();
+     g_out, g_err = s7_nil(sc);
 
-    return 0;
+     return 0;
 }
 
 // exported to wasm
 const char* eval_string(char* str) {
+     // freeing previous string returned from s7
+     // either like this, or I should copy everytime in my own global and free
+     free(g_out_str);
+
      // closing.. without having opened?
      // seems to be ok
      s7_close_output_port(g_sc, g_out);
@@ -28,13 +33,14 @@ const char* eval_string(char* str) {
      s7_set_current_error_port(g_sc, g_err);
 
      s7_pointer result = s7_eval_c_string(g_sc, str);
-     return s7_object_to_c_string(g_sc, result);
+     g_out_str = s7_object_to_c_string(g_sc, result);
+     return g_out_str;
 }
 
-const char* get_out(){
+const char* get_out() {
      return s7_get_output_string(g_sc, s7_current_output_port(g_sc));
 }
 
-const char* get_err(){
+const char* get_err() {
      return s7_get_output_string(g_sc, s7_current_error_port(g_sc));
 }
