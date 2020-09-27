@@ -23,3 +23,25 @@ body {
 .err {
     background-color: rgba(255, 0, 0, 0.2);
 }
+
+.eval-result pre:not(:empty)::before {
+    margin-left: -30px;
+    width: 30px;
+    display: inline-block;
+}
+
+.eval-result pre:empty::before {
+    content: "";
+    display: none;
+}
+.res::before {
+    content: " =>";
+}
+
+.out::before {
+    content: "out";
+}
+
+.err::before {
+    content: "err";
+}

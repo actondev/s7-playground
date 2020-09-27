@@ -137,20 +137,21 @@ This function is called by `org-babel-execute-src-block'"
 		     ;; #<unspecifed> etc cannot be read by emacs
 		     ;; also, out is a result of split-string, so we get the car
 		     (blah (print (car out)))
-		     (out (print (s-replace "#" "" (car out))))
+		     ;; fixing the #<unspecified> not being readable by emacs-lisp
+		     (out (print (s-replace "#<" "<" (car out))))
 		     (parsed (read out))
-		     (parsed (mapcar (lambda (el)
-				       (xml-escape-string
-					(if (symbolp el)
-					    (symbol-name el)
-					  el))
-				       )
-				     parsed)))
+		     (parsed2 (mapcar (lambda (el)
+					(xml-escape-string
+					 ;; note: %S print string quoted
+					 ;; %s removes the ".. but it's more annyoing to have it
+					 (format "%s" el)
+					 ))
+				      parsed)))
 		(concat
 		 "<div class='eval-result'>\n"
-		 (format "<pre class='res'>%s</pre>\n" (car parsed))
-		 (format "<pre class='out'>%s</pre>\n" (cadr parsed))
-		 (format "<pre class='err'>%s</pre>\n" (caddr parsed))
+		 (format "<pre class='res'>%s</pre>\n" (xml-escape-string (format "%S" (car parsed))))
+		 (format "<pre class='out'>%s</pre>\n" (cadr parsed2))
+		 (format "<pre class='err'>%s</pre>\n" (caddr parsed2))
 		 "</div>"
 		 )
 		;; (print out)

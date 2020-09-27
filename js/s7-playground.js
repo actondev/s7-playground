@@ -1,3 +1,13 @@
+function escapeHtml(unsafe) {
+    // https://stackoverflow.com/a/6234804
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+ }
+
 function createPreWithClass(className){
     const el = document.createElement("pre");
     el.className = className;
@@ -64,9 +74,9 @@ function setup() {
 		parent.parentNode.insertBefore(evalResult, parent.nextSibling);
 	    }
 
-	    evalResult.querySelector('.res').innerHTML = res;
-	    evalResult.querySelector('.out').innerHTML = out;
-	    evalResult.querySelector('.err').innerHTML = err;
+	    evalResult.querySelector('.res').innerHTML = escapeHtml(res);
+	    evalResult.querySelector('.out').innerHTML = escapeHtml(out);
+	    evalResult.querySelector('.err').innerHTML = escapeHtml(err);
 	}
     }
 }

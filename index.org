@@ -114,7 +114,7 @@ this-will-cause-an-error ;; will cause an error. comment this line and you'll se
   #+RESULTS:
   #+BEGIN_export html
   <div class='eval-result'>
-  <pre class='res'>((1 32 hi) (3 2 hi) (3 2 1))</pre>
+  <pre class='res'>((1 32 &quot;hi&quot;) (3 2 &quot;hi&quot;) (3 2 1))</pre>
   <pre class='out'></pre>
   <pre class='err'></pre>
   </div>
