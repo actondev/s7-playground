@@ -65,11 +65,60 @@ this-will-cause-an-error ;; will cause an error. comment this line and you'll se
   #+RESULTS:
   #+BEGIN_export html
   <div class='eval-result'>
-  <pre class='res'>(1 0 32)</pre>
+  <pre class='res'>(1 0 33)</pre>
   <pre class='out'></pre>
   <pre class='err'></pre>
   </div>
   #+END_export
+
+  Other math-related differences between s7 and r5rs:
+  - =rational?= and =exact= mean integer or ratio (i.e. not floating point), inexact means not exact.
+  - =floor=, =ceiling=, =truncate=, and =round= return (exact) integer results.
+  - =#= does not stand for an unknown digit.
+  - the "@" complex number notation is not supported ("@" is an exponent marker in s7).
+  - =+i= is not considered a number; include the real part.
+  - =modulo=, =remainder=, and =quotient= take integer, ratio, or real arguments.
+  - =lcm= and =gcd= can take integer or ratio arguments.
+  - =log= takes an optional second argument, the base.
+  - =.= and an exponent can occur in a number in any base.
+  - =rationalize= returns a ratio!
+  - =case= is significant in numbers, as elsewhere: #b0 is 0, but #B0 is an error. 
+
+  # note: the examples macros is defined later, in the Macros heading
+  #+BEGIN_SRC scheme :exports results :s7-results output :wrap src scheme
+(examples
+ (exact? 1.0)
+ (rational? 1.5)
+ (floor 1.4)
+ (remainder 2.4 1)
+ (modulo 1.4 1.0)
+ (lcm 3/4 1/6)
+ (log 8 2)
+ (number->string 0.5 2)
+ (string->number "0.1" 2)
+ (rationalize 1.5)
+ (complex 1/2 0)
+ (logbit? 6 1) ; argument order, (logbit? int index), follows gmp, not CL
+ )
+  #+END_SRC
+
+  #+RESULTS:
+  #+BEGIN_src scheme
+  (exact? 1.0) ;; => #f
+  (rational? 1.5) ;; => #f
+  (floor 1.4) ;; => 1
+  (remainder 2.4 1) ;; => 0.3999999999999999
+  (modulo 1.4 1.0) ;; => 0.3999999999999999
+  (lcm 3/4 1/6) ;; => 3/2
+  (log 8 2) ;; => 3
+  (number->string 0.5 2) ;; => 0.1
+  (string->number "0.1" 2) ;; => 0.5
+  (rationalize 1.5) ;; => 3/2
+  (complex 1/2 0) ;; => 1/2
+  (logbit? 6 1) ;; => #t
+  #+END_src
+
+
 
 
   # TODO remove: just showcasing that when we don't already have any results, they get created from javascript
@@ -79,6 +128,17 @@ this-will-cause-an-error ;; will cause an error. comment this line and you'll se
  (sin 0)
  (random 1000))
   #+END_SRC
+
+  #+RESULTS:
+  #+BEGIN_export html
+  <div class='eval-result'>
+  <pre class='res'>(1 0 578)</pre>
+  <pre class='out'></pre>
+  <pre class='err'></pre>
+  </div>
+  #+END_export
+
+
 
 * define*, lambda*
   =define*= and =lambda*= are extensions of define and lambda that
@@ -122,12 +182,12 @@ this-will-cause-an-error ;; will cause an error. comment this line and you'll se
 
 * Macros
   #+BEGIN_SRC scheme
-(define-macro (repl-examples . args)
+(define-macro (examples . args)
   `(for-each (lambda (exp)
-	       (format #t "~A\n;; => ~A\n" exp (eval exp)))
+	       (format #t "~A ;; => ~A\n" exp (eval exp)))
 	     ',args))
 
-(repl-examples
+(examples
  (+ 1 2 1)
  (/ 10 2)
  )
@@ -137,10 +197,8 @@ this-will-cause-an-error ;; will cause an error. comment this line and you'll se
   #+BEGIN_export html
   <div class='eval-result'>
   <pre class='res'>&lt;unspecified&gt;</pre>
-  <pre class='out'>(+ 1 2 1)
-  ;; =&gt; 4
-  (/ 10 2)
-  ;; =&gt; 5
+  <pre class='out'>(+ 1 2 1) ;; =&gt; 4
+  (/ 10 2) ;; =&gt; 5
   </pre>
   <pre class='err'></pre>
   </div>
