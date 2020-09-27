@@ -1,40 +1,49 @@
 body {
     max-width: 860px;
     margin: 0 auto;
-    font-size: 1rem;
+    /* 1rem ? */
+    font-size: 14px; 
     font-family: sans-serif;
-    line-height: 1.4;
+    /* line-height: 1.4; */
     color: #222;
     padding: 20px;
 }
 
 /* modifying monokai */
 .CodeMirror-matchingbracket {
-    /* outline:1px solid grey; */
     text-decoration: none !important;
     background: #666;
-    /* color:black !important; */
 }
 .CodeMirror {
     height: auto;
 }
 
-.res, pre.example {
-    background-color: #CCC;
-}
 .out {
-    background-color: rgba(0, 0, 255, 0.2);
+    color: #33F;
 }
 .err {
-    background-color: rgba(255, 0, 0, 0.2);
+    color: #F33;
 }
 
 .eval-result pre:not(:empty)::before {
-    background-color: white;
+    color: #666;
+    font-size: 0.8em;
     display: block;
+    padding-top: 5px;
 }
-pre {
+.code-container {
+    margin-top: 20px;
+    background-color: #EEE;
+}
+.eval-result {
+    margin-bottom: 20px;
+    background-color: #EEE;
+    padding-bottom: 10px;
+}
+.eval-result pre {
     overflow: auto;
+    margin: 0px; /* default is 14px !! */
+    padding-left: 10px;
 }
 
 .eval-result pre:empty::before {
@@ -57,8 +66,4 @@ code {
     font-family: 'Inconsolata', monospace;
     padding: 0 5px;
     background-color: #EEE;
-}
-
-.code-container {
-    margin-top: 20px;
 }
