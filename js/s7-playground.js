@@ -31,7 +31,6 @@ function setup() {
 	    matchBrackets: true,
 	   });
 	parinferCodeMirror.init(cm);
-	console.log("parent", parent);
 	const evalButton = parent.querySelector('.eval');
 	evalButton.onclick = function() {
 	    // newline is important before closing paren!
@@ -81,6 +80,24 @@ function setup() {
     }
 }
 
+function fib(num) {
+    if(num < 2) {
+        return num;
+    }
+    else {
+        return fib(num-1) + fib(num - 2);
+    }
+}
+
+function benchmarkFib(num){
+    const start = new Date();
+    const res = fib(num);
+    const end = new Date();
+    console.log("fib", num, "res", res, "time", (end-start)/ 100);
+}
+
 window.onload = function() {
     setup();
+    // parinfer causes to scroll in some codemirror instance
+    window.scrollTo(0, 0);
 }

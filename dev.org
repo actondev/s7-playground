@@ -15,6 +15,7 @@ meson setup buildc
 
    Building & launching
    #+BEGIN_SRC sh
+meson configure buildc -Doptimization=s
 ninja -C buildc
    #+END_SRC
 
@@ -40,10 +41,12 @@ ninja -C buildc
    Setting up project
    #+BEGIN_SRC sh
 meson setup build --cross-file wasm.ini
+meson configure build -Doptimization=s
    #+END_SRC
 
    Building & launching
    #+BEGIN_SRC sh
+source ~/dev/github/emsdk/emsdk_env.sh
 ninja -C build
    #+END_SRC
 
@@ -178,3 +181,24 @@ This function is called by `org-babel-execute-src-block'"
       result)))
    #+END_SRC
    
+* Benchmarks
+  c repl
+  #+BEGIN_SRC sh
+meson configure buildc | grep optimization
+meson configure buildc -Doptimization=s
+buildc/repl src/fib41.scm
+buildc/repl src/fib38.scm
+  #+END_SRC
+
+  wasm
+  #+BEGIN_SRC sh
+# optimize
+meson configure build | grep optimization
+# performance
+meson configure build -Doptimization=2
+# size
+meson configure build -Doptimization=s
+meson configure build -Doptimization=0
+
+ninja -C build
+  #+END_SRC

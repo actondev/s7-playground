@@ -358,6 +358,60 @@ this-will-cause-an-error
 
 
 
+* Benchmarks
+  #+BEGIN_SRC scheme :exports code :results none
+(define-macro (time expr)
+  `(let ((start (*s7* 'cpu-time)))
+     (let ((res (list ,expr))) ; expr might return multiple values
+       (list (car res)
+	     (- (*s7* 'cpu-time) start)))))
+  #+END_SRC
+
+  Let's see how fibonacci is doing
+  #+BEGIN_SRC scheme
+(define (fib n)
+  (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2)))))
+
+(time (fib 35))
+  #+END_SRC
+
+  #+RESULTS:
+  #+BEGIN_export html
+  <div class='eval-result'>
+  <pre class='res'>(9227465 0.192625)</pre>
+  <pre class='out'></pre>
+  <pre class='err'></pre>
+  </div>
+  #+END_export
+
+  The above (cached) result is with =s7= running on my desktop machine. Click =eval= to see the performance on the browser (don't forget to eval the previous code block that defines =time=)
+
+  Below are some benchmark times in my machine.
+
+** fibonacci : wasm
+   Wasm file size / benchmark. =(fib x)= time in seconds. File size of =.wasm= included as well.
+
+  | optimization | file size | (fib 38) |
+  | -O2          | 2mb       |      5.5 |
+  | -Os          | 1mb       |      5.5 |
+  | -O0          | 3.8mb     |      8.1 |
+
+  The equivalent =fib= implentation in javascript (running in the browser) took =4.5s= for =fib(38)=.
+  Try opening a console and running =benchmarkFib(38)=.
+
+** fibonacci : desktop
+  Desktop comparison (see [[file:src/repl.c]])
+
+  | optimization | file size | (fib 38) | (fib 41) |
+  | -O0          | 3.2mb     |      1.4 |      6.1 |
+  | -O2          | 10mb      |      0.8 |      3.4 |
+  | -Os          | 5.3mb     |      0.8 |      3.4 |
+
+  Similar implementation in other languages, and time in seconds for =fib 41=
+  | lang        | fib 41 |
+  | node v10.19 |      3 |
+  | chez scheme |    2.5 |
+
 * COMMENT local vars
   =org-html-htmlize-output-type= also helps with the =*hideshowvis*= problem. (see my blog publishing code as well)
   # Local Variables:

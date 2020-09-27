@@ -6,7 +6,7 @@
 /**
  * A special REPL that (upon complete input forms) prints out a scheme list:
  * (result output error)
- * 
+ *
  * This is to be parsed from emacs and fill out the s7 document results
  */
 int main(int argc, char** argv)
@@ -16,8 +16,14 @@ int main(int argc, char** argv)
     char buffer[BUFFER_SIZE];
     buffer[0] = '\0';
     printf("s7-playground repl\n> ");
-
     sc = s7_init();
+
+    // loading a file: used for the benchmarks
+    if (argc >= 2) {
+        s7_load(sc, argv[1]);
+        return 0;
+    }
+
     s7_pointer out,err;
     out = err = s7_nil(sc);
     do
@@ -56,7 +62,7 @@ int main(int argc, char** argv)
             s7_close_output_port(sc, out);
             s7_close_output_port(sc, err);
 
-            // stdout
+	    // stdout
             out = s7_open_output_string(sc);
             s7_set_current_output_port(sc, out);
 
@@ -82,7 +88,7 @@ int main(int argc, char** argv)
 
 
     } while(true);
-    
+
     // todo s7_free
     // gotta update s7 version
 }
