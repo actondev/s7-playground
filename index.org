@@ -396,7 +396,7 @@ this-will-cause-an-error
   | -Os          | 1mb       |      5.5 |
   | -O0          | 3.8mb     |      8.1 |
 
-  The equivalent =fib= implentation in javascript (running in the browser) took =4.5s= for =fib(38)=.
+  The equivalent =fib= implentation in javascript (running in the browser) took =0.45s= for =fib(38)=.
   Try opening a console and running =benchmarkFib(38)=.
 
 ** fibonacci : desktop
@@ -407,7 +407,7 @@ this-will-cause-an-error
   | -O2          | 10mb      |      0.8 |      3.4 |
   | -Os          | 5.3mb     |      0.8 |      3.4 |
 
-  Similar implementation in other languages, and time in seconds for =fib 41=
+  Similar implementation in other languages, and time in seconds for =fib 41= (including boot time)
   | lang        | fib 41 |
   | node v10.19 |      3 |
   | chez scheme |    2.5 |

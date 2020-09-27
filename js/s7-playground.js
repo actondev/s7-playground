@@ -93,7 +93,7 @@ function benchmarkFib(num){
     const start = new Date();
     const res = fib(num);
     const end = new Date();
-    console.log("fib", num, "res", res, "time", (end-start)/ 100);
+    console.log("fib", num, "res", res, "time", (end-start)/ 1000);
 }
 
 window.onload = function() {
