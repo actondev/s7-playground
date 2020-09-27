@@ -8,11 +8,37 @@ source ./emsdk_env.sh
 emcc -v
    #+END_SRC
 
+** Building the special repl
+   #+BEGIN_SRC sh
+meson setup buildc
+   #+END_SRC
+
+   Building & launching
+   #+BEGIN_SRC sh
+ninja -C buildc
+   #+END_SRC
+
+   #+BEGIN_SRC sh
+./buildc/repl
+   #+END_SRC
+
+   #+BEGIN_SRC emacs-lisp :results silent
+(run-scheme (concat "buildc/repl"))
+   #+END_SRC
+
+   #+BEGIN_SRC scheme
+(begin
+  (display "here 1")
+  (display "here 2")
+  (format #t "aaa")
+  (+ 1 2 3))
+   #+END_SRC
+
 ** Building
    Note: =emcc= has to be in the path for the following to work
 
    Setting up project
-   #+BEGIN_SRC src
+   #+BEGIN_SRC sh
 meson setup build --cross-file wasm.ini
    #+END_SRC
 
@@ -48,3 +74,107 @@ git clone https://github.com/shaunlebron/parinfer-codemirror.git ~/dev/github/pa
 cd ~/dev/github/parinfer-codemirror
 npm install
   #+END_SRC
+* emacs-lisp etc
+  The following
+
+  #+BEGIN_SRC emacs-lisp :results silent
+;; replace with an s7 repl that handles multi line input properly
+(run-scheme (concat "buildc/repl"))
+  #+END_SRC
+
+  #+BEGIN_SRC sh
+source ~/dev/github/emsdk/emsdk_env.sh
+emrun --serve_after_close index.html
+  #+END_SRC
+** org-export-filter-src-block-functions
+   https://orgmode.org/manual/Advanced-Export-Configuration.html
+   Making the src blocks a text input + an eval button
+
+   #+BEGIN_SRC emacs-lisp :results silent
+(defun s7-playground/src-block (text backend info)
+  "Exports a (scheme) src-block as a textarea coupled with an 'eval' button.
+This later gets converted to a codemirror editor.
+Note: the input text has already the code wrapped around some html tages which we strip ourselves"
+  (let* ((code (s-trim (replace-regexp-in-string "<[^>]*>" "" text)))
+	 (formatted (format "<div class='code-container'>
+<textarea class='code'>%s</textarea>
+<button class='eval'>eval</button>
+</div>\n" code)))
+    formatted))
+
+;; add-to-list doesn't add if it's already there! phew!
+(add-to-list 'org-export-filter-src-block-functions
+	      's7-playground/src-block)
+   #+END_SRC
+
+
+*** Other notes
+    #+BEGIN_QUOTE
+   
+    Oh wait! Just found org-babel-map-src-blocks and the two hooks org-export-before-{processing,parsing}-hook. That's probably what I'm going to do. – purple_arrows Sep 25 '18 at 22:14
+
+    #+END_QUOTE
+
+** org-babel-execute:scheme
+   Redefining =org-babel-execute:scheme= cause it uses geiser.. ugh!
+   #+BEGIN_SRC emacs-lisp :results silent
+(defun s7-playground/parse-repl-output (output)
+  "The s7-playgroudn repl returns a list upon input
+result stdout stderr.
+This function parses this string output and returns
+an emacs-lisp list"
+  (print "here..")
+  (print output)
+  ;; fixing the #<unspecified> not being readable by emacs-lisp
+  (let ((parsed (read (s-replace "#<" "<" output))))
+    (list
+     ;; result
+     ;; %S cause we want string to be quoted
+     (format "%S" (car parsed))
+     ;; in the stdout and stderr we don't need this info
+     (format "%s" (cadr parsed))
+     (format "%s" (caddr parsed))
+     )))
+
+(defun s7-playground/org-babel-output (repl-output-parsed &optional type)
+  "Type could be \"value\" \"output\" or \"error\".
+This is coming from :s7-results header args, in the same fashing as :results
+In any other case it will return 3 pre blocks with the res out and err classes."
+  (print repl-output-parsed)
+  (print "cond?")
+  (print type)
+  (cond ((string= type "value") (format "%s" (car repl-output-parsed)))
+	((string= type "output") (format "%s" (cadr repl-output-parsed)))
+	((string= type "error") (format "%s" (caddr repl-output-parsed)))
+	(t (progn
+	     (print "heree??")
+	     (concat
+	      "<div class='eval-result'>\n"
+	      (format "<pre class='res'>%s</pre>\n" (xml-escape-string (car repl-output-parsed)))
+	      (format "<pre class='out'>%s</pre>\n" (xml-escape-string (cadr repl-output-parsed)))
+	      (format "<pre class='err'>%s</pre>\n" (xml-escape-string (caddr repl-output-parsed)))
+	      "</div>"
+	      )))))
+
+(defun org-babel-execute:scheme (body params)
+  "Execute a block of Scheme code with org-babel.
+This function is called by `org-babel-execute-src-block'"
+  (print params)
+  (print (cdr (assq :s7-results params)))
+  (save-excursion
+    (let* ((result-type (cdr (assq :result-type params)))
+	   (session "*scheme*")
+	   (full-body (org-babel-expand-body:scheme body params))
+	   (result
+	    (progn
+	      (let* ((out (org-babel-comint-with-output
+			      ("*scheme*" "\n> " )
+			    (scheme-send-string (format "(begin %s\n)" body))
+			    (accept-process-output (get-buffer-process (current-buffer)))))
+		     ;; out is a result of split-string, so we get the car
+		     (parsed (s7-playground/parse-repl-output (car out))))
+		(s7-playground/org-babel-output parsed (cdr (assq :s7-results params)))
+		))))
+      result)))
+   #+END_SRC
+   

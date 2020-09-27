@@ -1,3 +1,19 @@
+function escapeHtml(unsafe) {
+    // https://stackoverflow.com/a/6234804
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+ }
+
+function createPreWithClass(className){
+    const el = document.createElement("pre");
+    el.className = className;
+    return el;
+}
+
 function setup() {
     const codeElements = document.getElementsByClassName("code");
     // looping in reverse. if not, replacing the code elements with codemirror will not work
@@ -36,19 +52,31 @@ function setup() {
 			 [], // argument types
 				     []); // arguments
 
-	    console.log("res:", res);
-	    console.log("out:", out);
-	    console.log("err:", err);
-	    parent.querySelector('.res').innerHTML = res;
-	    parent.querySelector('.out').innerHTML = out;
-	    parent.querySelector('.err').innerHTML = err;
+	    // the document *might* have a div with class eval-result
+	    // which is when manually running the code with the apropriate parsing
+	    // (even all the blocks could be evaluated already!)
+	    // so, in case it exists we just replace with res, out, err
+	    // if not, we create this block
+	    let evalResult = parent.nextElementSibling;
+	    if(evalResult.className != "eval-result") {
+		evalResult = document.createElement("div");
+		evalResult.className = "eval-result";
 
-	    console.log("parent", parent);
-	    const possibleStaticResult = parent.nextSibling;
-	    if(possibleStaticResult.className == "example") {
-		possibleStaticResult.remove();
+		const elRes = createPreWithClass('res');
+		const elOut = createPreWithClass('out');
+		const elErr = createPreWithClass('err');
+
+		evalResult.appendChild(elRes);
+		evalResult.appendChild(elOut);
+		evalResult.appendChild(elErr);
+
+		// appending evalResult next to our code
+		parent.parentNode.insertBefore(evalResult, parent.nextElementSibling);
 	    }
-	    // note: check for <empty string> ?
+
+	    evalResult.querySelector('.res').innerHTML = escapeHtml(res);
+	    evalResult.querySelector('.out').innerHTML = escapeHtml(out);
+	    evalResult.querySelector('.err').innerHTML = escapeHtml(err);
 	}
     }
 }
