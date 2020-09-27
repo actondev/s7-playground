@@ -62,8 +62,8 @@ node build/s7_wasm.js
 
 * gh-pages
   #+BEGIN_SRC sh
+git branch -d gh-pages # removing branch
 git checkout --orphan gh-pages
-git checkout gh-pages # or next times when the branch exists
 git add index.html build/s7_wasm.js build/s7_wasm.wasm -f
 git commit -am "deploy"
 git push --set-upstream origin gh-pages --force

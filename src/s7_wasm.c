@@ -1,6 +1,7 @@
 #include "s7.h"
 
-#include <stdio.h>
+/* #include <stdio.h> */
+#include <stdlib.h>
 
 s7_scheme* g_sc = NULL;
 s7_pointer g_out, g_err;
@@ -8,7 +9,7 @@ char* g_out_str = NULL;
 
 int main() {
      g_sc = s7_init();
-     g_out, g_err = s7_nil(sc);
+     g_out = g_err = s7_nil(g_sc);
 
      return 0;
 }
