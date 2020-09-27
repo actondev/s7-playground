@@ -1,0 +1,403 @@
+#+TITLE: s7 playground
+# the org-babel-execute:scheme is modded so that it outputs html
+#+PROPERTY: header-args:scheme :exports both :eval never-export :wrap export html
+# see https://orgmode.org/manual/Publishing-options.html
+#+OPTIONS: html-postamble:nil num:nil html-style:nil toc:nil
+# the rest of css/js files are in a separate file
+#+SETUPFILE: inc/includes.setup
+# github budge corner
+#+INCLUDE: "inc/github.html" export html
+
+A work-in-progress interactive tutorial of =s7 scheme=. For a complete
+manual please refer to
+https://ccrma.stanford.edu/software/snd/snd/s7.html
+
+# showing the toc after my intro text
+#+TOC: headlines
+
+* Intro
+  #+BEGIN_SRC scheme
+;; these are some comments
+(display "Hello there!!") ;; stdout is displayed in blue
+(+ 1 2 3)
+;; comment the following line (prepend ";;")  and you'll see 6 as a result
+this-will-cause-an-error
+;; stderr is displayed in red
+;; note: the result you get is the result of the last evaluated expression
+  #+END_SRC
+
+  #+RESULTS:
+  #+BEGIN_export html
+  <div class='eval-result'>
+  <pre class='res'>unbound-variable</pre>
+  <pre class='out'>Hello there!!</pre>
+  <pre class='err'>
+  ;unbound variable this-will-cause-an-error in this-will-cause-an-error
+  </pre>
+  </div>
+  #+END_export
+
+* Math
+  s7 includes:
+  - sinh, cosh, tanh, asinh, acosh, atanh
+  - logior, logxor, logand, lognot, logbit?, ash, integer-decode-float
+  - random
+  - nan?, infinite?
+
+  #+BEGIN_SRC scheme :results value verbatim :exports both
+(list
+ (cos 0)
+ (sin 0)
+ (random 100))
+  #+END_SRC
+
+  #+RESULTS:
+  #+BEGIN_export html
+  <div class='eval-result'>
+  <pre class='res'>(1 0 33)</pre>
+  <pre class='out'></pre>
+  <pre class='err'></pre>
+  </div>
+  #+END_export
+
+  Other math-related differences between s7 and r5rs:
+  - =rational?= and =exact= mean integer or ratio (i.e. not floating point), inexact means not exact.
+  - =floor=, =ceiling=, =truncate=, and =round= return (exact) integer results.
+  - =#= does not stand for an unknown digit.
+  - the "@" complex number notation is not supported ("@" is an exponent marker in s7).
+  - =+i= is not considered a number; include the real part.
+  - =modulo=, =remainder=, and =quotient= take integer, ratio, or real arguments.
+  - =lcm= and =gcd= can take integer or ratio arguments.
+  - =log= takes an optional second argument, the base.
+  - =.= and an exponent can occur in a number in any base.
+  - =rationalize= returns a ratio!
+  - =case= is significant in numbers, as elsewhere: #b0 is 0, but #B0 is an error. 
+
+  # note: the examples macros is defined later, in the Macros heading
+  #+BEGIN_SRC scheme :exports results :s7-results output :wrap src scheme
+(examples
+ (exact? 1.0)
+ (rational? 1.5)
+ (floor 1.4)
+ (remainder 2.4 1)
+ (modulo 1.4 1.0)
+ (lcm 3/4 1/6)
+ (log 8 2)
+ (number->string 0.5 2)
+ (string->number "0.1" 2)
+ (rationalize 1.5)
+ (complex 1/2 0)
+ (logbit? 6 1) ; argument order, (logbit? int index), follows gmp, not CL
+ )
+  #+END_SRC
+
+  #+RESULTS:
+  #+BEGIN_src scheme
+  (exact? 1.0) ;; => #f
+  (rational? 1.5) ;; => #f
+  (floor 1.4) ;; => 1
+  (remainder 2.4 1) ;; => 0.3999999999999999
+  (modulo 1.4 1.0) ;; => 0.3999999999999999
+  (lcm 3/4 1/6) ;; => 3/2
+  (log 8 2) ;; => 3
+  (number->string 0.5 2) ;; => 0.1
+  (string->number "0.1" 2) ;; => 0.5
+  (rationalize 1.5) ;; => 3/2
+  (complex 1/2 0) ;; => 1/2
+  (logbit? 6 1) ;; => #t
+  #+END_src
+
+
+
+
+  # TODO remove: just showcasing that when we don't already have any results, they get created from javascript
+  #+BEGIN_SRC scheme :results value verbatim :exports both
+(list
+ (cos 0)
+ (sin 0)
+ (random 1000))
+  #+END_SRC
+
+  #+RESULTS:
+  #+BEGIN_export html
+  <div class='eval-result'>
+  <pre class='res'>(1 0 578)</pre>
+  <pre class='out'></pre>
+  <pre class='err'></pre>
+  </div>
+  #+END_export
+
+
+* define*, lambda*
+  =define*= and =lambda*= are extensions of define and lambda that
+  make it easier to deal with optional, keyword, and rest
+  arguments.
+
+  The syntax is very simple: every argument to =define*= has a default
+  value and is automatically available as a keyword argument. The
+  default value is either =#f= if unspecified, or given in a list
+  whose first member is the argument name. The last argument can be
+  preceded by =:rest= or a dot =.= to indicate that all other trailing
+  arguments should be packaged as a list under that argument's name. A
+  trailing or rest argument's default value is =()= and can't be
+  specified in the declaration. The rest argument is *not* available as
+  a keyword argument.
+
+  #+BEGIN_SRC scheme :exports both
+(define*
+ ;; function name: hi
+ ;; a is needed
+ ;; b has default argument 32
+ ;; c has default argument "hi"
+ (hi a (b 32) (c "hi"))
+ ;; just returning the arguments
+ (list a b c))
+
+(list
+ (hi 1)
+ (hi :b 2 :a 3)
+ (hi 3 2 1))
+  #+END_SRC
+
+  #+RESULTS:
+  #+BEGIN_export html
+  <div class='eval-result'>
+  <pre class='res'>((1 32 &quot;hi&quot;) (3 2 &quot;hi&quot;) (3 2 1))</pre>
+  <pre class='out'></pre>
+  <pre class='err'></pre>
+  </div>
+  #+END_export
+
+* Macros
+  Macros is where the lisp languages really shine. They can extend the
+  language in ways otherwise not possible. They are also quite tricky to get,
+  personally it took me some time to understand the concept.
+  
+  My short explanation that I wish I had read somewhere else:
+  - When you call a normal function =(my-function (+ 1 2))=, the
+    argument =(+ 1 2)= gets evaluated and its result gets passed to
+    the function. So, in the function body, that argument already has the value =3=
+  - On the contrary, when you call a macro, the macro accepts exactly
+    what you have typed. Meaning, upon calling =(my-macro (+ 1 2))=,
+    the argument inside the macro is the exact list you typed, meaning
+    =(+ 1 2)= and *not* =3= which is the result you'd get after
+    evaluation. So, in other words, you have to evaluate the arguments
+    inside the macro yourself to get their value.
+
+  Demonstrating this in code:
+  #+BEGIN_SRC scheme
+(define (my-function x)
+  (format #t "my-function: x is ~A\n" x)
+  x)
+
+(define-macro (my-macro x)
+  (format #t "my-macro: x is ~A\n" x)
+  ;; macros need to return some list ` is just a handy construct
+  `',x ;; the `',x causes to return the argument as passed: a list
+  )
+
+(my-function (+ 1 2))
+(my-macro (+ 1 2))
+  #+END_SRC
+
+  #+RESULTS:
+  #+BEGIN_export html
+  <div class='eval-result'>
+  <pre class='res'>(+ 1 2)</pre>
+  <pre class='out'>my-function: x is 3
+  my-macro: x is (+ 1 2)
+  </pre>
+  <pre class='err'></pre>
+  </div>
+  #+END_export
+
+
+  An example with =if=. Let's say =if= wasn't available in the
+  language, and we will construct =my-if=. We want to pass 3 arguments
+  to =my-if=
+  - First, will be the test clause.
+  - Then will be our 2 branches.
+
+  If the test clause is =not false=, we shall execute (aka =evaluate=)
+  the 1st branch (aka 2nd argument), otherwise the 2nd branch (aka 3rd argument).
+
+  To summarize, the signature shall be =(my-if test-clause branch-true branch-false)=.
+
+  - Q: Could we implement it as a function?
+  - A: No! As we said above, when we call a function, all its arguments are evaluated. Let me demonstrate:
+
+  #+BEGIN_SRC scheme
+(define (my-if-function test-clause branch-true branch-false)
+  ;; yeah yeah, we use here the normal if but..
+  ;; cannot do this in another way!
+  (if test-clause branch-true branch-false))
+
+(my-if-function
+ #f ;; let's run the 2nd one
+ (begin
+   (display "executing branch-true\n")
+   1)
+ (begin
+   (display "executing branch-false\n")
+   2))
+  #+END_SRC
+
+  #+RESULTS:
+  #+BEGIN_export html
+  <div class='eval-result'>
+  <pre class='res'>2</pre>
+  <pre class='out'>executing branch-true
+  executing branch-false
+  </pre>
+  <pre class='err'></pre>
+  </div>
+  #+END_export
+
+  You see? But in our =my-if= we don't want the branch-true to be evaluated if not necessary! That's why we need a macro.
+
+  #+BEGIN_SRC scheme
+(define-macro (my-if-macro test-clause branch-true branch-false)
+  `(if ,test-clause
+       ,branch-true
+       ,branch-false))
+
+(my-if-macro
+ #f ;; let's run the 2nd one
+ (begin
+   (display "executing branch-true\n")
+   1)
+ (begin
+   (display "executing branch-false\n")
+   2))
+  #+END_SRC
+
+  #+RESULTS:
+  #+BEGIN_export html
+  <div class='eval-result'>
+  <pre class='res'>2</pre>
+  <pre class='out'>executing branch-false
+  </pre>
+  <pre class='err'></pre>
+  </div>
+  #+END_export
+
+  You see the difference? Before we go on explaining how you write a macro, let me show you a different Implementation of =my-if=
+  #+BEGIN_SRC scheme
+(define-macro (my-if-macro2 test-clause branch-true branch-false)
+  (if (eval test-clause)
+      (eval branch-true)
+      (eval branch-false)))
+
+(my-if-macro2
+ #f ;; let's run the 2nd one
+ (begin
+   (display "executing branch-true\n")
+   1)
+ (begin
+   (display "executing branch-false\n")
+   2))
+  #+END_SRC
+
+  #+RESULTS:
+  #+BEGIN_export html
+  <div class='eval-result'>
+  <pre class='res'>2</pre>
+  <pre class='out'>executing branch-false
+  </pre>
+  <pre class='err'></pre>
+  </div>
+  #+END_export
+
+  These 2 implentations are essentially the same.
+
+
+** Fun with macros
+   Internally in this document I'm using the =examples= macro to
+   showcase small snippets and their results. That saves me from
+   writing the result myself. I only write the code snippets wrapped
+   around the =examples= macro call, and evaluate it to get the =<code
+   snippet> ;; => <result>= output
+   #+BEGIN_SRC scheme
+(define-macro (examples . args)
+  `(for-each (lambda (exp)
+	       (format #t "~A ;; => ~A\n" exp (eval exp)))
+	     ',args))
+
+(examples
+ (+ 1 2 1)
+ (/ 10 2)
+ )
+   #+END_SRC
+
+   #+RESULTS:
+   #+BEGIN_export html
+   <div class='eval-result'>
+   <pre class='res'>&lt;unspecified&gt;</pre>
+   <pre class='out'>(+ 1 2 1) ;; =&gt; 4
+   (/ 10 2) ;; =&gt; 5
+   </pre>
+   <pre class='err'></pre>
+   </div>
+   #+END_export
+
+
+* Benchmarks
+  #+BEGIN_SRC scheme :exports code :results none
+(define-macro (time expr)
+  `(let ((start (*s7* 'cpu-time)))
+     (let ((res (list ,expr))) ; expr might return multiple values
+       (list (car res)
+	     (- (*s7* 'cpu-time) start)))))
+  #+END_SRC
+
+  Let's see how fibonacci is doing
+  #+BEGIN_SRC scheme
+(define (fib n)
+  (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2)))))
+
+(time (fib 35))
+  #+END_SRC
+
+  #+RESULTS:
+  #+BEGIN_export html
+  <div class='eval-result'>
+  <pre class='res'>(9227465 0.192625)</pre>
+  <pre class='out'></pre>
+  <pre class='err'></pre>
+  </div>
+  #+END_export
+
+  The above (cached) result is with =s7= running on my desktop machine. Click =eval= to see the performance on the browser (don't forget to eval the previous code block that defines =time=)
+
+  Below are some benchmark times in my machine.
+
+** fibonacci : wasm
+   Wasm file size / benchmark. =(fib x)= time in seconds. File size of =.wasm= included as well.
+
+  | optimization | file size | (fib 38) |
+  | -O2          | 2mb       |      5.5 |
+  | -Os          | 1mb       |      5.5 |
+  | -O0          | 3.8mb     |      8.1 |
+
+  The equivalent =fib= implentation in javascript (running in the browser) took =0.45s= for =fib(38)=.
+  Try opening a console and running =benchmarkFib(38)=.
+
+** fibonacci : desktop
+  Desktop comparison (see [[file:src/repl.c]])
+
+  | optimization | file size | (fib 38) | (fib 41) |
+  | -O0          | 3.2mb     |      1.4 |      6.1 |
+  | -O2          | 10mb      |      0.8 |      3.4 |
+  | -Os          | 5.3mb     |      0.8 |      3.4 |
+
+  Similar implementation in other languages, and time in seconds for =fib 41= (including boot time)
+  | lang        | fib 41 |
+  | node v10.19 |      3 |
+  | chez scheme |    2.5 |
+
+* COMMENT local vars
+  =org-html-htmlize-output-type= also helps with the =*hideshowvis*= problem. (see my blog publishing code as well)
+  # Local Variables:
+  # org-html-htmlize-output-type: nil
+  # End:
+  

@@ -1,0 +1,14 @@
+* s7 playground
+  Interactive =s7 scheme= tutorial in your browser.
+
+  https://actondev.github.io/s7-playground/
+
+  See
+  - [[file:dev.org]] for development info.
+  - [[file:index.org]] for the tutorial content
+
+* What?
+  =s7 scheme= is a (quite fast!) scheme implementation in =ANSI C=. A
+  beatiful side effect of this is that it can be compiled out of the
+  box to llvm. So it's really trivial to run =s7 scheme= in your
+  browser with =web assembly=.

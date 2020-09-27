@@ -1,0 +1,609 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2020-09-28 Mon 01:04 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>s7 playground</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="actondev" />
+<script type="text/javascript" src="libs/codemirror/lib/codemirror.js"></script>
+<link rel="stylesheet" href="libs/codemirror/lib/codemirror.css">
+<link rel="stylesheet" href="libs/codemirror/theme/monokai.css">
+<script type="text/javascript" src="libs/codemirror/mode/scheme.js"></script>
+<script type="text/javascript" src="libs/codemirror/addon/edit/matchbrackets.js"></script>
+<script type="text/javascript" src="libs/codemirror/addon/edit/closebrackets.js"></script>
+<script type="text/javascript" src="libs/codemirror/addon/selection/active-line.js"></script>
+<script type="text/javascript" src="libs/parinfer.js"></script>
+<script type="text/javascript" src="libs/parinfer-codemirror.js"></script>
+<script type="text/javascript" src="build/s7_wasm.js"></script>
+<script type="text/javascript" src="js/s7-playground.js"></script>
+<link rel='stylesheet' type='text/css' href='css/style.css'/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">s7 playground</h1>
+<!-- https://github.com/tholman/github-corners -->
+<a href="https://github.com/actonDev/s7-playground" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+<p>
+A work-in-progress interactive tutorial of <code>s7 scheme</code>. For a complete
+manual please refer to
+<a href="https://ccrma.stanford.edu/software/snd/snd/s7.html">https://ccrma.stanford.edu/software/snd/snd/s7.html</a>
+</p>
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgea283ae">Intro</a></li>
+<li><a href="#org2f48351">Math</a></li>
+<li><a href="#orgbd42a17">define*, lambda*</a></li>
+<li><a href="#org5b967ff">Macros</a>
+<ul>
+<li><a href="#org5d13730">Fun with macros</a></li>
+</ul>
+</li>
+<li><a href="#org1a41222">Benchmarks</a>
+<ul>
+<li><a href="#orge57a633">fibonacci : wasm</a></li>
+<li><a href="#orgf4def1f">fibonacci : desktop</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgea283ae" class="outline-2">
+<h2 id="orgea283ae">Intro</h2>
+<div class="outline-text-2" id="text-orgea283ae">
+<div class='code-container'>
+<textarea class='code'>;; these are some comments
+(display "Hello there!!") ;; stdout is displayed in blue
+(+ 1 2 3)
+;; comment the following line (prepend ";;")  and you'll see 6 as a result
+this-will-cause-an-error
+;; stderr is displayed in red
+;; note: the result you get is the result of the last evaluated expression</textarea>
+<button class='eval'>eval</button>
+</div>
+<div class='eval-result'>
+<pre class='res'>unbound-variable</pre>
+<pre class='out'>Hello there!!</pre>
+<pre class='err'>
+;unbound variable this-will-cause-an-error in this-will-cause-an-error
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2f48351" class="outline-2">
+<h2 id="org2f48351">Math</h2>
+<div class="outline-text-2" id="text-org2f48351">
+<p>
+s7 includes:
+</p>
+<ul class="org-ul">
+<li>sinh, cosh, tanh, asinh, acosh, atanh</li>
+<li>logior, logxor, logand, lognot, logbit?, ash, integer-decode-float</li>
+<li>random</li>
+<li>nan?, infinite?</li>
+</ul>
+
+<div class='code-container'>
+<textarea class='code'>(list
+ (cos 0)
+ (sin 0)
+ (random 100))</textarea>
+<button class='eval'>eval</button>
+</div>
+<div class='eval-result'>
+<pre class='res'>(1 0 33)</pre>
+<pre class='out'></pre>
+<pre class='err'></pre>
+</div>
+
+<p>
+Other math-related differences between s7 and r5rs:
+</p>
+<ul class="org-ul">
+<li><code>rational?</code> and <code>exact</code> mean integer or ratio (i.e. not floating point), inexact means not exact.</li>
+<li><code>floor</code>, <code>ceiling</code>, <code>truncate</code>, and <code>round</code> return (exact) integer results.</li>
+<li><code>#</code> does not stand for an unknown digit.</li>
+<li>the "@" complex number notation is not supported ("@" is an exponent marker in s7).</li>
+<li><code>+i</code> is not considered a number; include the real part.</li>
+<li><code>modulo</code>, <code>remainder</code>, and <code>quotient</code> take integer, ratio, or real arguments.</li>
+<li><code>lcm</code> and <code>gcd</code> can take integer or ratio arguments.</li>
+<li><code>log</code> takes an optional second argument, the base.</li>
+<li><code>.</code> and an exponent can occur in a number in any base.</li>
+<li><code>rationalize</code> returns a ratio!</li>
+<li><code>case</code> is significant in numbers, as elsewhere: #b0 is 0, but #B0 is an error.</li>
+</ul>
+
+<div class='code-container'>
+<textarea class='code'>(exact? 1.0) ;; =&gt; #f
+  (rational? 1.5) ;; =&gt; #f
+  (floor 1.4) ;; =&gt; 1
+  (remainder 2.4 1) ;; =&gt; 0.3999999999999999
+  (modulo 1.4 1.0) ;; =&gt; 0.3999999999999999
+  (lcm 3/4 1/6) ;; =&gt; 3/2
+  (log 8 2) ;; =&gt; 3
+  (number-&gt;string 0.5 2) ;; =&gt; 0.1
+  (string-&gt;number "0.1" 2) ;; =&gt; 0.5
+  (rationalize 1.5) ;; =&gt; 3/2
+  (complex 1/2 0) ;; =&gt; 1/2
+  (logbit? 6 1) ;; =&gt; #t</textarea>
+<button class='eval'>eval</button>
+</div>
+<div class='code-container'>
+<textarea class='code'>(list
+ (cos 0)
+ (sin 0)
+ (random 1000))</textarea>
+<button class='eval'>eval</button>
+</div>
+<div class='eval-result'>
+<pre class='res'>(1 0 578)</pre>
+<pre class='out'></pre>
+<pre class='err'></pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgbd42a17" class="outline-2">
+<h2 id="orgbd42a17">define*, lambda*</h2>
+<div class="outline-text-2" id="text-orgbd42a17">
+<p>
+<code>define*</code> and <code>lambda*</code> are extensions of define and lambda that
+make it easier to deal with optional, keyword, and rest
+arguments.
+</p>
+
+<p>
+The syntax is very simple: every argument to <code>define*</code> has a default
+value and is automatically available as a keyword argument. The
+default value is either <code>#f</code> if unspecified, or given in a list
+whose first member is the argument name. The last argument can be
+preceded by <code>:rest</code> or a dot <code>.</code> to indicate that all other trailing
+arguments should be packaged as a list under that argument's name. A
+trailing or rest argument's default value is <code>()</code> and can't be
+specified in the declaration. The rest argument is <b>not</b> available as
+a keyword argument.
+</p>
+
+<div class='code-container'>
+<textarea class='code'>(define*
+ ;; function name: hi
+ ;; a is needed
+ ;; b has default argument 32
+ ;; c has default argument "hi"
+ (hi a (b 32) (c "hi"))
+ ;; just returning the arguments
+ (list a b c))
+
+(list
+ (hi 1)
+ (hi :b 2 :a 3)
+ (hi 3 2 1))</textarea>
+<button class='eval'>eval</button>
+</div>
+<div class='eval-result'>
+<pre class='res'>((1 32 &quot;hi&quot;) (3 2 &quot;hi&quot;) (3 2 1))</pre>
+<pre class='out'></pre>
+<pre class='err'></pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5b967ff" class="outline-2">
+<h2 id="org5b967ff">Macros</h2>
+<div class="outline-text-2" id="text-org5b967ff">
+<p>
+Macros is where the lisp languages really shine. They can extend the
+language in ways otherwise not possible. They are also quite tricky to get,
+personally it took me some time to understand the concept.
+</p>
+
+<p>
+My short explanation that I wish I had read somewhere else:
+</p>
+<ul class="org-ul">
+<li>When you call a normal function <code>(my-function (+ 1 2))</code>, the
+argument <code>(+ 1 2)</code> gets evaluated and its result gets passed to
+the function. So, in the function body, that argument already has the value <code>3</code></li>
+<li>On the contrary, when you call a macro, the macro accepts exactly
+what you have typed. Meaning, upon calling <code>(my-macro (+ 1 2))</code>,
+the argument inside the macro is the exact list you typed, meaning
+<code>(+ 1 2)</code> and <b>not</b> <code>3</code> which is the result you'd get after
+evaluation. So, in other words, you have to evaluate the arguments
+inside the macro yourself to get their value.</li>
+</ul>
+
+<p>
+Demonstrating this in code:
+</p>
+<div class='code-container'>
+<textarea class='code'>(define (my-function x)
+  (format #t "my-function: x is ~A\n" x)
+  x)
+
+(define-macro (my-macro x)
+  (format #t "my-macro: x is ~A\n" x)
+  ;; macros need to return some list ` is just a handy construct
+  `',x ;; the `',x causes to return the argument as passed: a list
+  )
+
+(my-function (+ 1 2))
+(my-macro (+ 1 2))</textarea>
+<button class='eval'>eval</button>
+</div>
+<div class='eval-result'>
+<pre class='res'>(+ 1 2)</pre>
+<pre class='out'>my-function: x is 3
+my-macro: x is (+ 1 2)
+</pre>
+<pre class='err'></pre>
+</div>
+
+
+<p>
+An example with <code>if</code>. Let's say <code>if</code> wasn't available in the
+language, and we will construct <code>my-if</code>. We want to pass 3 arguments
+to <code>my-if</code>
+</p>
+<ul class="org-ul">
+<li>First, will be the test clause.</li>
+<li>Then will be our 2 branches.</li>
+</ul>
+
+<p>
+If the test clause is <code>not false</code>, we shall execute (aka <code>evaluate</code>)
+the 1st branch (aka 2nd argument), otherwise the 2nd branch (aka 3rd argument).
+</p>
+
+<p>
+To summarize, the signature shall be <code>(my-if test-clause branch-true branch-false)</code>.
+</p>
+
+<ul class="org-ul">
+<li>Q: Could we implement it as a function?</li>
+<li>A: No! As we said above, when we call a function, all its arguments are evaluated. Let me demonstrate:</li>
+</ul>
+
+<div class='code-container'>
+<textarea class='code'>(define (my-if-function test-clause branch-true branch-false)
+  ;; yeah yeah, we use here the normal if but..
+  ;; cannot do this in another way!
+  (if test-clause branch-true branch-false))
+
+(my-if-function
+ #f ;; let's run the 2nd one
+ (begin
+   (display "executing branch-true\n")
+   1)
+ (begin
+   (display "executing branch-false\n")
+   2))</textarea>
+<button class='eval'>eval</button>
+</div>
+<div class='eval-result'>
+<pre class='res'>2</pre>
+<pre class='out'>executing branch-true
+executing branch-false
+</pre>
+<pre class='err'></pre>
+</div>
+
+<p>
+You see? But in our <code>my-if</code> we don't want the branch-true to be evaluated if not necessary! That's why we need a macro.
+</p>
+
+<div class='code-container'>
+<textarea class='code'>(define-macro (my-if-macro test-clause branch-true branch-false)
+  `(if ,test-clause
+       ,branch-true
+       ,branch-false))
+
+(my-if-macro
+ #f ;; let's run the 2nd one
+ (begin
+   (display "executing branch-true\n")
+   1)
+ (begin
+   (display "executing branch-false\n")
+   2))</textarea>
+<button class='eval'>eval</button>
+</div>
+<div class='eval-result'>
+<pre class='res'>2</pre>
+<pre class='out'>executing branch-false
+</pre>
+<pre class='err'></pre>
+</div>
+
+<p>
+You see the difference? Before we go on explaining how you write a macro, let me show you a different Implementation of <code>my-if</code>
+</p>
+<div class='code-container'>
+<textarea class='code'>(define-macro (my-if-macro2 test-clause branch-true branch-false)
+  (if (eval test-clause)
+      (eval branch-true)
+      (eval branch-false)))
+
+(my-if-macro2
+ #f ;; let's run the 2nd one
+ (begin
+   (display "executing branch-true\n")
+   1)
+ (begin
+   (display "executing branch-false\n")
+   2))</textarea>
+<button class='eval'>eval</button>
+</div>
+<div class='eval-result'>
+<pre class='res'>2</pre>
+<pre class='out'>executing branch-false
+</pre>
+<pre class='err'></pre>
+</div>
+
+<p>
+These 2 implentations are essentially the same.
+</p>
+</div>
+
+
+<div id="outline-container-org5d13730" class="outline-3">
+<h3 id="org5d13730">Fun with macros</h3>
+<div class="outline-text-3" id="text-org5d13730">
+<p>
+Internally in this document I'm using the <code>examples</code> macro to
+showcase small snippets and their results. That saves me from
+writing the result myself. I only write the code snippets wrapped
+around the <code>examples</code> macro call, and evaluate it to get the <code>&lt;code
+   snippet&gt; ;; =&gt; &lt;result&gt;</code> output
+</p>
+<div class='code-container'>
+<textarea class='code'>(define-macro (examples . args)
+  `(for-each (lambda (exp)
+	       (format #t "~A ;; =&gt; ~A\n" exp (eval exp)))
+	     ',args))
+
+(examples
+ (+ 1 2 1)
+ (/ 10 2)
+ )</textarea>
+<button class='eval'>eval</button>
+</div>
+<div class='eval-result'>
+<pre class='res'>&lt;unspecified&gt;</pre>
+<pre class='out'>(+ 1 2 1) ;; =&gt; 4
+(/ 10 2) ;; =&gt; 5
+</pre>
+<pre class='err'></pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org1a41222" class="outline-2">
+<h2 id="org1a41222">Benchmarks</h2>
+<div class="outline-text-2" id="text-org1a41222">
+<div class='code-container'>
+<textarea class='code'>(define-macro (time expr)
+  `(let ((start (*s7* 'cpu-time)))
+     (let ((res (list ,expr))) ; expr might return multiple values
+       (list (car res)
+	     (- (*s7* 'cpu-time) start)))))</textarea>
+<button class='eval'>eval</button>
+</div>
+<p>
+Let's see how fibonacci is doing
+</p>
+<div class='code-container'>
+<textarea class='code'>(define (fib n)
+  (if (&lt; n 2) n (+ (fib (- n 1)) (fib (- n 2)))))
+
+(time (fib 35))</textarea>
+<button class='eval'>eval</button>
+</div>
+<div class='eval-result'>
+<pre class='res'>(9227465 0.192625)</pre>
+<pre class='out'></pre>
+<pre class='err'></pre>
+</div>
+
+<p>
+The above (cached) result is with <code>s7</code> running on my desktop machine. Click <code>eval</code> to see the performance on the browser (don't forget to eval the previous code block that defines <code>time</code>)
+</p>
+
+<p>
+Below are some benchmark times in my machine.
+</p>
+</div>
+
+<div id="outline-container-orge57a633" class="outline-3">
+<h3 id="orge57a633">fibonacci : wasm</h3>
+<div class="outline-text-3" id="text-orge57a633">
+<p>
+Wasm file size / benchmark. <code>(fib x)</code> time in seconds. File size of <code>.wasm</code> included as well.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">optimization</td>
+<td class="org-left">file size</td>
+<td class="org-right">(fib 38)</td>
+</tr>
+
+<tr>
+<td class="org-left">-O2</td>
+<td class="org-left">2mb</td>
+<td class="org-right">5.5</td>
+</tr>
+
+<tr>
+<td class="org-left">-Os</td>
+<td class="org-left">1mb</td>
+<td class="org-right">5.5</td>
+</tr>
+
+<tr>
+<td class="org-left">-O0</td>
+<td class="org-left">3.8mb</td>
+<td class="org-right">8.1</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+The equivalent <code>fib</code> implentation in javascript (running in the browser) took <code>0.45s</code> for <code>fib(38)</code>.
+Try opening a console and running <code>benchmarkFib(38)</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf4def1f" class="outline-3">
+<h3 id="orgf4def1f">fibonacci : desktop</h3>
+<div class="outline-text-3" id="text-orgf4def1f">
+<p>
+Desktop comparison (see <a href="src/repl.c">src/repl.c</a>)
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">optimization</td>
+<td class="org-left">file size</td>
+<td class="org-right">(fib 38)</td>
+<td class="org-right">(fib 41)</td>
+</tr>
+
+<tr>
+<td class="org-left">-O0</td>
+<td class="org-left">3.2mb</td>
+<td class="org-right">1.4</td>
+<td class="org-right">6.1</td>
+</tr>
+
+<tr>
+<td class="org-left">-O2</td>
+<td class="org-left">10mb</td>
+<td class="org-right">0.8</td>
+<td class="org-right">3.4</td>
+</tr>
+
+<tr>
+<td class="org-left">-Os</td>
+<td class="org-left">5.3mb</td>
+<td class="org-right">0.8</td>
+<td class="org-right">3.4</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Similar implementation in other languages, and time in seconds for <code>fib 41</code> (including boot time)
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">lang</td>
+<td class="org-right">fib 41</td>
+</tr>
+
+<tr>
+<td class="org-left">node v10.19</td>
+<td class="org-right">3</td>
+</tr>
+
+<tr>
+<td class="org-left">chez scheme</td>
+<td class="org-right">2.5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

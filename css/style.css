@@ -1,0 +1,69 @@
+body {
+    max-width: 860px;
+    margin: 0 auto;
+    /* 1rem ? */
+    font-size: 16px;
+    font-family: sans-serif;
+    /* line-height: 1.4; */
+    color: #222;
+    padding: 20px;
+}
+
+/* modifying monokai */
+.CodeMirror-matchingbracket {
+    text-decoration: none !important;
+    background: #666;
+}
+.CodeMirror {
+    height: auto;
+}
+
+.out {
+    color: #33F;
+}
+.err {
+    color: #F33;
+}
+
+.eval-result pre:not(:empty)::before {
+    color: #666;
+    font-size: 0.7em;
+    display: block;
+    padding-top: 5px;
+}
+.code-container {
+    margin-top: 20px;
+    background-color: #EEE;
+}
+.eval-result {
+    margin-bottom: 20px;
+    background-color: #EEE;
+    padding-bottom: 10px;
+}
+.eval-result pre {
+    overflow: auto;
+    margin: 0px; /* default is 14px !! */
+    padding-left: 10px;
+}
+
+.eval-result pre:empty::before {
+    content: "";
+    display: none;
+}
+.res::before {
+    content: "result";
+}
+
+.out::before {
+    content: "output";
+}
+
+.err::before {
+    content: "error";
+}
+
+code {
+    font-family: 'Inconsolata', monospace;
+    padding: 0 5px;
+    background-color: #EEE;
+}

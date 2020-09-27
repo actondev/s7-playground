@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+</head>
+
+<body>
+  <h1>S7 Scheme playground</h1>
+  <textarea id="form"></textarea>
+
+  <button id="eval">eval</button>
+  <script sync type="text/javascript" src="build/s7_wasm.js">
+  </script>
+  <script type="text/javascript">
+    document.getElementById('eval').onclick = function () {
+      //click me function!
+      const form = document.getElementById('form').value
+      Module.ccall('eval_string', // name of C function
+        null, // return type
+        ['string'], // argument types
+        [form]); // arguments
+    }
+  </script>
+</body>
+
+</html>

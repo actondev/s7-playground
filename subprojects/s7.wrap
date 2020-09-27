@@ -1,0 +1,5 @@
+[wrap-git]
+ url = https://github.com/actonDev/s7.git
+ # until next s7 version that contains the emscripten commit
+ revision = 9.5+emscripten+meson
+ depth = 1

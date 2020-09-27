@@ -1,0 +1,16 @@
+# -- codemirror
+#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/lib/codemirror.js"></script>
+#+HTML_HEAD: <link rel="stylesheet" href="libs/codemirror/lib/codemirror.css">
+#+HTML_HEAD: <link rel="stylesheet" href="libs/codemirror/theme/monokai.css">
+#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/mode/scheme.js"></script>
+# codemirror addons
+#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/addon/edit/matchbrackets.js"></script>
+#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/addon/edit/closebrackets.js"></script>
+#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/addon/selection/active-line.js"></script>
+# -- parinfer
+#+HTML_HEAD: <script type="text/javascript" src="libs/parinfer.js"></script>
+#+HTML_HEAD: <script type="text/javascript" src="libs/parinfer-codemirror.js"></script>
+# -- our stuf
+#+HTML_HEAD: <script type="text/javascript" src="build/s7_wasm.js"></script>
+#+HTML_HEAD: <script type="text/javascript" src="js/s7-playground.js"></script>
+#+HTML_HEAD: <link rel='stylesheet' type='text/css' href='css/style.css'/>
