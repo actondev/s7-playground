@@ -2,7 +2,7 @@ body {
     max-width: 860px;
     margin: 0 auto;
     /* 1rem ? */
-    font-size: 14px; 
+    font-size: 16px;
     font-family: sans-serif;
     /* line-height: 1.4; */
     color: #222;
@@ -27,7 +27,7 @@ body {
 
 .eval-result pre:not(:empty)::before {
     color: #666;
-    font-size: 0.8em;
+    font-size: 0.7em;
     display: block;
     padding-top: 5px;
 }
