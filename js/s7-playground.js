@@ -57,7 +57,7 @@ function setup() {
 	    // (even all the blocks could be evaluated already!)
 	    // so, in case it exists we just replace with res, out, err
 	    // if not, we create this block
-	    let evalResult = parent.nextSibling;
+	    let evalResult = parent.nextElementSibling;
 	    if(evalResult.className != "eval-result") {
 		evalResult = document.createElement("div");
 		evalResult.className = "eval-result";
@@ -71,7 +71,7 @@ function setup() {
 		evalResult.appendChild(elErr);
 
 		// appending evalResult next to our code
-		parent.parentNode.insertBefore(evalResult, parent.nextSibling);
+		parent.parentNode.insertBefore(evalResult, parent.nextElementSibling);
 	    }
 
 	    evalResult.querySelector('.res').innerHTML = escapeHtml(res);

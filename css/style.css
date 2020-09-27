@@ -1,6 +1,11 @@
 body {
-    max-width: 800px;
+    max-width: 860px;
     margin: 0 auto;
+    font-size: 1rem;
+    font-family: sans-serif;
+    line-height: 1.4;
+    color: #222;
+    padding: 20px;
 }
 
 /* modifying monokai */
@@ -25,9 +30,11 @@ body {
 }
 
 .eval-result pre:not(:empty)::before {
-    margin-left: -30px;
-    width: 30px;
-    display: inline-block;
+    background-color: white;
+    display: block;
+}
+pre {
+    overflow: auto;
 }
 
 .eval-result pre:empty::before {
@@ -35,13 +42,23 @@ body {
     display: none;
 }
 .res::before {
-    content: " =>";
+    content: "result";
 }
 
 .out::before {
-    content: "out";
+    content: "output";
 }
 
 .err::before {
-    content: "err";
+    content: "error";
+}
+
+code {
+    font-family: 'Inconsolata', monospace;
+    padding: 0 5px;
+    background-color: #EEE;
+}
+
+.code-container {
+    margin-top: 20px;
 }
