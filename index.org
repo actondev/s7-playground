@@ -1,27 +1,12 @@
 #+TITLE: s7 playground
-# #+SUBTITLE: Try s7 scheme in your browser
+# the org-babel-execute:scheme is modded so that it outputs html
 #+PROPERTY: header-args:scheme :exports both :eval never-export :wrap export html
-# the org-babel-execute:scheme is modded so that it outputs html with the
-# evaluation result, stdout and stderr
-#+OPTIONS: html-postamble:nil num:nil html-style:nil toc:nil
 # see https://orgmode.org/manual/Publishing-options.html
-# -- codemirror
-#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/lib/codemirror.js"></script>
-#+HTML_HEAD: <link rel="stylesheet" href="libs/codemirror/lib/codemirror.css">
-#+HTML_HEAD: <link rel="stylesheet" href="libs/codemirror/theme/monokai.css">
-#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/mode/scheme.js"></script>
-# codemirror addons
-#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/addon/edit/matchbrackets.js"></script>
-#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/addon/edit/closebrackets.js"></script>
-#+HTML_HEAD: <script type="text/javascript" src="libs/codemirror/addon/selection/active-line.js"></script>
-# -- parinfer
-#+HTML_HEAD: <script type="text/javascript" src="libs/parinfer.js"></script>
-#+HTML_HEAD: <script type="text/javascript" src="libs/parinfer-codemirror.js"></script>
-# -- our stuf
-#+HTML_HEAD: <script type="text/javascript" src="build/s7_wasm.js"></script>
-#+HTML_HEAD: <script type="text/javascript" src="js/s7-playground.js"></script>
-#+HTML_HEAD: <link rel='stylesheet' type='text/css' href='css/style.css'/>
-
+#+OPTIONS: html-postamble:nil num:nil html-style:nil toc:nil
+# the rest of css/js files are in a separate file
+#+SETUPFILE: inc/includes.setup
+# github budge corner
+#+INCLUDE: "inc/github.html" export html
 
 A work-in-progress interactive tutorial of =s7 scheme=. For a complete
 manual please refer to
@@ -141,7 +126,6 @@ this-will-cause-an-error
   <pre class='err'></pre>
   </div>
   #+END_export
-
 
 
 * define*, lambda*
@@ -355,7 +339,6 @@ this-will-cause-an-error
    <pre class='err'></pre>
    </div>
    #+END_export
-
 
 
 * Benchmarks
